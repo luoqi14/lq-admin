@@ -1,33 +1,46 @@
-# react-cli-pc
+# lq-admin
 > 自适应后台管理系统页面级模板
 
-[项目地址](http://git.ops.com/fe-group/react-cli-pc)
+- react16 + redux + react-router4 + antd3
+- 屏幕自适应
+- 页面级业务组件
+- webpack dllPlugin性能优化
+- mock server环境配置
+- eslint airbnb规范
+- 集成sonarQube、countly、fundebug等
+- 第三方模块按需加载
+- tree shaking
+- 代码分隔
+
+
+[项目地址](https://github.com/luoqi14/lq-admin)
 
 ## Start
-  编辑本地 .npmrc 文件
-
   ```bash
-  registry=http://172.16.2.71:4873/
-  sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
-  ```
-
-  然后执行
-
-  ```bash
-  git clone http://git.ops.com/fe-group/react-cli-pc
-  cd react-cli-pc && npm i
+  git clone https://github.com/luoqi14/lq-admin
+  cd lq-admin && npm i --sass_binary_site=https://npm.taobao.org/mirrors/node-sass
   ```
 
 ## Dev
+  本地启动node服务器 ```npm start```
+
   启用开发环境 ```npm run dev```
 
-  本地启动node服务器 ```npm start```
 
   如果默认端口号3000在本地已经被占用，可以使用 ```npm start --PORT xxxx``` 的形式指定特定的端口号。
 
 ## Compile
-编译打包
-  ```npm run compile```
+开发环境编译打包
+  ```npm run compile:dev```
+
+测试环境编译打包
+  ```npm run compile:qafc```
+
+预发环境编译打包
+  ```npm run compile:pre```
+
+生产环境编译打包
+  ```npm run compile:online```
 
 ## Clean
 项目清理
@@ -40,24 +53,7 @@
 代码规范修正
   ```npm run lint:fix```
 
-git提交限制
-  ```npm run githook```
-
-## Coverage
-代码覆盖率
-  ```npm run codecov```
-
-## Deploy
-项目部署
-  ```npm run deploy[:env]```
-
-部署实际上等同于
-  ```npm run lint && npm run test && npm run clean && npm run compile```
-
-
-# Code Submition
-代码提交前，先执行
-```npm run lint:fix```
-对存在语法规范错误的代码进行修复后，再push到对应的分支
+dll加速
+  ```npm run dll```
 
 

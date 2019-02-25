@@ -1,0 +1,31 @@
+{
+  "presets": [
+    ["env", {
+      "targets": { "browsers": ["ie >= 10"] },
+      "modules": false,
+      "debug": false,
+      "useBuiltIns": true
+    }],
+    "react",
+    "stage-2"
+  ],
+  "plugins": [
+    ["import", {
+      "libraryName": "antd",
+      "libraryDirectory": "es",
+      "style": true
+    }],
+    ["babel-plugin-imports-transform", {
+      "@f12/components": {
+        "transform": "@f12/components/dist/${member}",
+        "preventFullImport": true
+      }
+    }],
+    ["transform-imports", {
+      "@xinguang/common-tool": {
+        "transform": "@xinguang/common-tool/lib/${member}",
+        "preventFullImport": true
+      }
+    }]
+  ]
+}

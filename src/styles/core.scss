@@ -1,0 +1,189 @@
+@import 'base';
+
+// Some best-practice CSS that's useful for most apps
+// Just remove them if they're not what you want
+html {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: auto;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+body {
+  flex: auto;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-right: 0!important;
+}
+
+.container {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  resize: none;
+}
+
+.all-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  background: rgba(255, 255, 255, 0);
+  z-index: 1000;
+  display: none;
+}
+
+table tr td{
+  text-align : center;
+}
+
+.buttonDelete{
+  text-align : center;
+  margin-top : 30px;
+  margin-bottom : 30px;
+  font-size : 20px;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.flex1 {
+  flex: auto;
+};
+
+.xg {
+  .fe-blank-holder {
+    margin-left: 0;
+  }
+  .daterange-datepicker {
+    width: 100%;
+  }
+  .ant-select-sm .ant-select-selection__rendered {
+    line-height: 24px;
+  }
+  .ant-layout-header {
+    background: #fff;
+    z-index: 2;
+    box-shadow: 1px 2px 1px rgba(0,0,0,.072);
+    .ant-menu-item {
+      font-size: 14px;
+    }
+    .ant-menu-item-selected.ant-menu-item {
+      border-bottom: 2px solid #02abc2;
+    }
+  }
+  .ant-layout-sider {
+    width: 200px;
+  }
+  .ant-menu-inline .ant-menu-submenu-title {
+    font-size: 14px;
+  }
+  .ant-menu-inline .ant-menu-item {
+    font-size: 12px;
+  }
+  .ant-menu-dark.ant-menu-horizontal {
+    border: none;
+  }
+  .fe-listpage {
+    width: 100%;
+  }
+  .ant-table-scroll {
+    overflow-x: auto;
+  }
+  .ant-table-body {
+    overflow-x: visible!important;
+  }
+}
+
+.ant-select-dropdown-menu-item {
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .xg {
+    .ant-form-item-control-wrapper,.ant-form-item-label {
+      display:block;
+      width: 100%;
+    }
+
+    [class^=ant-col-] {
+      width: 100%;
+    }
+
+    .ant-form-item-label {
+      padding: 0 0 8px;
+      margin: 0;
+      display: block;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .ant-form-item-label label:after {
+      display: none
+    }
+
+    .ant-col-xs-24.ant-form-item-label {
+      padding: 0 0 8px;
+      margin: 0;
+      display: block;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .ant-col-xs-24.ant-form-item-label label:after {
+      display: none;
+    }
+    .ant-col-pull-2 {
+      right: 0;
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .xg {
+    .ant-form-item-control-wrapper,.ant-form-item-label {
+      display:block;
+      width: 100%
+    }
+
+    .ant-form-item-label {
+      padding: 0 0 8px;
+      margin: 0;
+      display: block;
+      text-align: left;
+      line-height: 1.5
+    }
+
+    .ant-form-item-label label:after {
+      display: none
+    }
+
+    .ant-col-xs-24.ant-form-item-label {
+      padding: 0 0 8px;
+      margin: 0;
+      display: block;
+      text-align: left;
+      line-height: 1.5
+    }
+
+    .ant-col-xs-24.ant-form-item-label label:after {
+      display: none
+    }
+    .ant-col-pull-2 {
+      right: 0;
+    }
+  }
+}

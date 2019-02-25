@@ -1,0 +1,13 @@
+.miss-wrapper {
+  background: #f6f6f6;
+}
+
+.miss-slogan {
+  font-size: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  .miss-slogan {
+    font-size: 16px;
+  }
+}

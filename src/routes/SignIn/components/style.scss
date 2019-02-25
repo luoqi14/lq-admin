@@ -1,0 +1,56 @@
+.xg .login-layout.ant-layout {
+  background-color: rgba(0, 0, 0, 0.6);
+  /* background-image: url(/login-bg.svg); */
+  background-size: contain;
+}
+.login-form {
+  max-width: 400px;
+  background: #fff;
+  padding: 40px;
+  box-shadow: 10px 10px 0px -2px rgba(0, 0, 0, 0.2);
+  .login-form-button {
+    width: 100%;
+  }
+  .login-logo-wrapper {
+    text-align: center;
+    font-size: 25px;
+    color: rgb(173, 173, 173);
+  }
+  .login-fp {
+    text-align: center;
+  }
+  .login-logo-text {
+    margin-left: 8px;
+  }
+  .login-logo {
+    img {
+      height: 120px;
+      width: 120px;
+    }
+  }
+}
+
+.login-content {
+  padding: 0 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.login-bg-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.ant-layout-footer {
+  background-color: rgba(0, 0, 0, 0);
+  color: #fff;
+}

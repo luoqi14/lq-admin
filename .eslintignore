@@ -1,0 +1,6 @@
+blueprints/**/files/**
+coverage/**
+node_modules/**
+build/**
+src/index.html
+lib/**

@@ -1,0 +1,80 @@
+{
+  "resultCode": "0",
+  "resultData": [
+    {
+      "id": "1",
+      "name": "Dashboard",
+      "icon": "dashboard"
+    }, {
+      "id": "2",
+      "name": "列表页",
+      "icon": "table",
+      "children": [
+        {
+          "id": "21",
+          "name": "查询表格",
+          "href": "/Manage/SearchList"
+        }
+      ]
+    }, {
+      "id": "3",
+      "name": "详情页",
+      "icon": "profile",
+      "children": [
+        {
+          "id": "31",
+          "name": "基础详情页",
+          "href": "/Manage/BasicDetail"
+        }
+      ]
+    }, {
+      "id": "4",
+      "name": "异常页",
+      "icon": "warning",
+      "children": [
+        {
+          "id": "41",
+          "name": "404",
+          "href": "/404"
+        }, {
+          "id": "42",
+          "name": "500",
+          "href": "/Error"
+        }
+      ]
+    }, {
+      "id": "5",
+      "name": "用户",
+      "icon": "user",
+      "children": [
+        {
+          "id": "51",
+          "name": "登录",
+          "href": "/SignIn"
+        }
+      ]
+    }, {
+      "id": "6",
+      "name": "使用文档",
+      "icon": "book",
+      "href": "/Manage/Demo"
+    }, {
+      "id": "7",
+      "name": "一级菜单",
+      "icon": "menu-unfold",
+      "children": [
+        {
+          "id": "71",
+          "name": "二级菜单",
+          "children": [
+            {
+              "id": "711",
+              "name": "三级菜单"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resultDesc": "SUCCESS"
+}

@@ -1,0 +1,45 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "plugins": [
+    "babel",
+    "react",
+    "promise"
+  ],
+  "env": {
+    "browser" : true
+  },
+  "globals": {
+    "__ONLINE__"      : false,
+    "__PRE__"         : false,
+    "__QAIF__"        : false,
+    "__QAFC__"        : false,
+    "__DEV__"         : false,
+    "__TEST__"        : false,
+    "__LOCAL__"       : false,
+    "__MOCK__"        : false
+  },
+  "rules": {
+    "key-spacing" : 0,
+    "jsx-quotes" : [2, "prefer-double"],
+    "max-len" : [2, 120, 2],
+    "object-curly-spacing" : [2, "always"],
+    "no-trailing-spaces": 0,
+    "comma-dangle": [2, "always-multiline"],
+    "react/jsx-no-bind": 0,
+    "react/prop-types": 0,
+    "react/forbid-prop-types": 0,
+    "react/require-default-props": 0,
+    "no-underscore-dangle": 0,
+    "no-unused-expressions": [2, { "allowShortCircuit": true, "allowTernary": true, "allowTaggedTemplates": true }],
+    "no-param-reassign": 1,
+    "arrow-parens": [2, "always"],
+    "react/prefer-stateless-function": 0,
+    "import/no-extraneous-dependencies": 0,
+    "arrow-body-style": 0,
+    "no-restricted-globals": 1,
+    "prefer-destructuring": 1,
+    "jsx-a11y/anchor-is-valid": 0,
+    "jsx-a11y/click-events-have-key-events": 0
+  }
+}

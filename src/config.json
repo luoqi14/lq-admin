@@ -1,0 +1,19 @@
+{
+  "apiAddress": {
+    "online": "",
+    "pre": "",
+    "qaif": "//gateway.qaif.ops.com/promotioncenter",
+    "qafc": "//gateway.qafc.ops.com/promotioncenter",
+    "dev": "//gateway.dev.ops.com/promotioncenter",
+    "local": "//gateway.dev.ops.com/promotioncenter",
+    "mock": ""
+  },
+  "userApiAddress": {
+    "online": "//gateway.toobob.com/xgusercenter",
+    "pre": "//gatewayuat.toobob.com/xgusercenter",
+    "qaif": "//gateway.qaif.ops.com/xgusercenter",
+    "qafc": "//gateway.qafc.ops.com/xgusercenter",
+    "dev": "//gateway.dev.ops.com/xgusercenter",
+    "local": "//gateway.dev.ops.com/xgusercenter"
+  }
+}

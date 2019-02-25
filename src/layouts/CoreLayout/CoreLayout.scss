@@ -1,0 +1,59 @@
+.core-layout__viewport {
+  padding-top: 4rem;
+}
+
+.ant-layout-sider .logo-wrapper {
+  height: 64px;
+  padding: 0 16px;
+  transition: .3s all;
+}
+
+.logo-title {
+  font-size: 14px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.logo-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.login-name {
+  font-size: 14px;
+  white-space: pre;
+}
+
+.login-avatar {
+  border: 2px solid;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  margin-right: 8px;
+}
+
+.no-spin-icon .ant-spin-dot i {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.logo {
+  img {
+    width: 60px;
+  }
+}
+
+.ant-layout-sider-collapsed {
+  .logo {
+    text-align: center;
+    width: 100%;
+    img {
+      width: 60px;
+    }
+  }
+  .logo-wrapper {
+    padding: 0;
+  }
+  .logo-title {
+    display: none;
+  }
+}

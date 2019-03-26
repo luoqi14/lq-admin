@@ -47,14 +47,6 @@ export const getBaseUrl = () => {
   return address[getEnv()];
 };
 
-export const getUserBaseUrl = () => {
-  const address = config.userApiAddress;
-  if (__MOCK__) {
-    return address.mock || (`${window.location.protocol}//${window.location.host}`);
-  }
-  return address[getEnv()];
-};
-
 export const getDictBaseUrl = () => {
   const address = config.dictApiAddress;
   if (__MOCK__) {
@@ -127,6 +119,11 @@ export function mapReceivedData(data, decorate) {
 const isField = (val) => (typeof val === 'object' && val !== null) &&
   !(val instanceof Array) && 'value' in val && !(val._d);
 
+const capitalize = ([first, ...rest], lowerRest = false) =>
+  first.toUpperCase() + (lowerRest ? rest.join('').toLowerCase() : rest.join(''));
+
+const splitString = (key, separator) => key.replace(/(\w+)(Time)/g, `$1${separator}$2`);
+
 const shapeType = (param, key) => {
   let { value } = param;
   const res = {};
@@ -138,26 +135,32 @@ const shapeType = (param, key) => {
     case 'numberRange':
       value = value || [];
       res[key] = param.value;
-      res[`${key}Start`] = value[0] ? value[0].valueOf() : undefined;
-      res[`${key}End`] = value[1] ? value[1].valueOf() : undefined;
+      res[`start${capitalize(key)}`] = value[0] ? value[0].format('YYYY-MM-DD HH:mm:ss') : undefined;
+      res[`end${capitalize(key)}`] = value[1] ? value[1].format('YYYY-MM-DD HH:mm:ss') : undefined;
+      res[splitString(key, 'Start')] = value[0] ? value[0].format('YYYY-MM-DD HH:mm:ss') : undefined;
+      res[splitString(key, 'End')] = value[1] ? value[1].format('YYYY-MM-DD HH:mm:ss') : undefined;
       break;
     case 'dateRange':
       value = value || [];
       res[key] = param.value;
-      res[`${key}Start`] = value[0] ? value[0].startOf('day').valueOf() : undefined;
-      res[`${key}End`] = value[1] ? value[1].endOf('day').valueOf() : undefined;
+      res[`start${capitalize(key)}`] = value[0] ? value[0].startOf('day').format('YYYY-MM-DD') : undefined;
+      res[`end${capitalize(key)}`] = value[1] ? value[1].endOf('day').format('YYYY-MM-DD') : undefined;
+      res[splitString(key, 'Start')] = value[0] ? value[0].startOf('day').format('YYYY-MM-DD') : undefined;
+      res[splitString(key, 'End')] = value[1] ? value[1].startOf('day').format('YYYY-MM-DD') : undefined;
       break;
     case 'monthRange':
       value = value || [];
       res[key] = param.value;
-      res[`${key}Start`] = value[0].format('YYYY-MM');
-      res[`${key}End`] = value[1].format('YYYY-MM');
+      res[`start${capitalize(key)}`] = value[0].format('YYYY-MM');
+      res[`end${capitalize(key)}`] = value[1].format('YYYY-MM');
+      res[splitString(key, 'Start')] = value[0].format('MM-DD');
+      res[splitString(key, 'End')] = value[1].format('MM-DD');
       break;
     case 'date':
-      res[key] = moment(param.value).valueOf();
+      res[key] = moment(param.value).format('YYYY-MM-DD');
       break;
     case 'datetime':
-      res[key] = moment(param.value).valueOf();
+      res[key] = moment(param.value).format('YYYY-MM-DD HH:mm:ss');
       break;
     default:
       res[key] = param.value;
@@ -166,14 +169,14 @@ const shapeType = (param, key) => {
   return res;
 };
 
-export function mapToSendData(params, decorate) {
+export function mapToSendData(params, decorate, exludedNames = []) {
   let res = {};
   const keys = Object.keys(params);
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
     const param = params[key];
     if (isField(param)) {
-      if (!param.local) {
+      if (!param.local && exludedNames.indexOf(key) === -1) {
         const valueObj = shapeType(param, key);
         res = {
           ...res,
@@ -232,7 +235,9 @@ export function mapToAntdFields(fields) {
     if (!('value' in newField)) {
       newField.value = undefined;
     }
-    antdFields[newField.name] = newField;
+    if (newField.type !== 'title') {
+      antdFields[newField.name] = newField;
+    }
   });
   return antdFields;
 }

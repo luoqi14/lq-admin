@@ -38,7 +38,7 @@
     "import/no-extraneous-dependencies": 0,
     "arrow-body-style": 0,
     "no-restricted-globals": 1,
-    "prefer-destructuring": 1,
+    "prefer-destructuring": 0,
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/click-events-have-key-events": 0
   }

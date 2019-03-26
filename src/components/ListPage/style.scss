@@ -1,0 +1,32 @@
+.listpage-selected-num {
+  color: $primary-color;
+  margin: 0 2px;
+  font-weight: bold;
+}
+
+.listpage-selected-wrapper {
+  margin-right: 4px;
+}
+
+.fe-listpage {
+  padding: 16px;
+  flex: auto;
+  overflow-x: auto;
+  .listpage-title-container {
+    margin-bottom: 16px;
+    min-height: 28px;
+  }
+  .listpage-table-container {
+    width: 100%;
+    flex: auto;
+  }
+  .listpage-main-container {
+    flex-flow: wrap;
+  }
+  .ant-table-thead>tr>th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
+  }
+}

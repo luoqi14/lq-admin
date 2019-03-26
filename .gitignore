@@ -4,7 +4,9 @@
 node_modules
 
 build
+build.zip
 coverage
 .idea/
 
 yarn.lock
+.DS_Store

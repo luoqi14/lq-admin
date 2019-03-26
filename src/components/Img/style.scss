@@ -1,0 +1,22 @@
+.img-container {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  background-size: cover;
+  transition: all .3s;
+  .img-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    transition: all .3s;
+  }
+  .img-click {
+    cursor: pointer;
+  }
+  .img-click:hover {
+    filter: opacity(0.8);
+  }
+}

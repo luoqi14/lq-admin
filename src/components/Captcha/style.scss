@@ -1,0 +1,15 @@
+.captcha-btn {
+  width: 100%;
+  padding: 0;
+}
+.captcha-btn.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+  padding-left: 10px;
+}
+
+.captcha-input {
+  flex: 1;
+}
+
+.captcha-btn-wrapper {
+  width: 100px;
+}

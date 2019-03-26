@@ -1,0 +1,22 @@
+.ant-input-suffix {
+  opacity: 0;
+  transition: .3s;
+  .anticon-close-circle:hover {
+    color: #999;
+  }
+  .anticon-close-circle:active {
+    color: #666;
+  }
+  .anticon-close-circle {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s;
+    font-size: 12px;
+  }
+}
+
+.ant-input-affix-wrapper:hover {
+  .ant-input-suffix {
+    opacity: 1;
+  }
+}

@@ -1,14 +1,13 @@
 /* eslint-disable global-require,camelcase */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import fetch from 'lq-fetch';
 import { LocaleProvider, message } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
+import fetch from './util/fetch';
 import './styles/core.scss';
 import './util/fix';
 import createStore from './store/createStore';
-import { getBaseUrl, getUserBaseUrl } from './util';
-import { history } from './store/location';
+import { getBaseUrl } from './util';
 
 message.config({
   maxCount: 1,
@@ -31,35 +30,16 @@ message.config({
 
 fetch.init({
   baseUrl: getBaseUrl(),
-  // different project has different token when ever not login yet
-  addAuth: () => localStorage.getItem('accessToken') || 'Basic xxxxxxxx',
   monitor: {
     start: () => {},
     end: () => {},
     error: () => {},
   },
-  hash: process.env.version,
-  refreshToken: {
-    invalidCode: '-5',
-    url: `${getUserBaseUrl()}/token/refresh`,
-    getValue: () => localStorage.getItem('refreshToken'),
-    key: 'refreshToken',
-    tokenName: 'access_token',
-    beforeRefresh: () => {
-      localStorage.setItem('accessToken', '');
-    },
-    afterRefresh: (res) => {
-      if (res.resultCode === '0') {
-        const { access_token, refresh_token } = res.resultData;
-        localStorage.setItem('accessToken', access_token);
-        localStorage.setItem('refreshToken', refresh_token);
-      } else {
-        localStorage.setItem('accessToken', '');
-        history.push({ pathname: '/SignIn' });
-        window.storeManager.clear();
-      }
-    },
+  headers: {
+    channel: 'mgr',
+    'Content-Type': 'application/x-www-form-urlencoded',
   },
+  hash: process.env.version,
 });
 
 // ========================================================
@@ -85,10 +65,7 @@ const MOUNT_NODE = document.getElementById('root');
 
 let render = () => {
   const App = require('./containers/AppContainer').default;
-  ReactDOM.render(
-    <LocaleProvider locale={zhCN}><App store={store} /></LocaleProvider>,
-    MOUNT_NODE
-  );
+  ReactDOM.render(<LocaleProvider locale={zhCN}><App store={store} /></LocaleProvider>, MOUNT_NODE);
 };
 
 // This code is excluded from production bundle

@@ -1,6 +1,6 @@
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { message } from 'antd';
+import message from '../components/message';
 import reducers from './reducers';
 import { updateLocation, history } from './location';
 
@@ -46,10 +46,13 @@ function callAPIMiddleware({ dispatch, getState }) {
 
     return callAPI(getState()).then(
       (response) => {
-        if (response.resultCode === '0') {
+        if (response.errorCode === 0) {
+          localStorage.setItem('accessToken', '');
+          history.push('/SignIn');
+        } else if (response.success) {
           const newPayload = {
             ...payload,
-            data: response.resultData,
+            data: response.payload,
             type: successType,
             success: true,
           };
@@ -58,14 +61,14 @@ function callAPIMiddleware({ dispatch, getState }) {
           return newPayload;
         }
         const failurePayload = {
-          msg: response.resultDesc,
+          msg: response.msg,
           type: failureType,
           success: false,
         };
-        message.error(response.resultDesc);
+        message.error(response.msg);
         dispatch(failurePayload);
         callback && callback(failurePayload, dispatch, getState());
-        return undefined;
+        return failurePayload;
       },
       (error) => {
         const errorPayload = {

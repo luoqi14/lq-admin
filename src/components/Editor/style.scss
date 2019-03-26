@@ -1,0 +1,47 @@
+.xg {
+  .ql-container {
+    height: 250px;
+  }
+
+  .ql-toolbar, ql-header {
+    line-height: initial;
+  }
+
+  .has-error {
+    .ql-container, .ql-toolbar {
+      border-color: #f04134;
+    }
+  }
+
+  .ql-fullscreen:before {
+    content: "\E64A";
+    display: block;
+    font-family: anticon!important;
+    font-weight: bold;
+  }
+
+  .ql-editor {
+    padding: 4px 11px;
+  }
+
+  .ql-editor.ql-blank:before {
+    font-style: normal;
+    font-size: 14px;
+    color: #ccc;
+  }
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    overflow: auto;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    .ql-container {
+      flex: 1;
+    }
+  }
+}

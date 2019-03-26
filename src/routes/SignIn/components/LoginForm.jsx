@@ -1,7 +1,6 @@
 /* eslint-disable semi,no-undef */
 import React, { Component } from 'react';
 import { Form, Input, Icon, Button } from 'antd';
-import { Link } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
@@ -21,7 +20,12 @@ const createFormItem = (opts) => {
   }
   return opts.getFieldDecorator(opts.name, {
     rules,
-  })(<Input prefix={<Icon type={opts.icon} style={{ fontSize: 13 }} />} type={opts.type} placeholder={opts.label} />);
+  })(<Input
+    prefix={<Icon type={opts.icon} style={{ fontSize: 13 }} />}
+    type={opts.type}
+    placeholder={opts.label}
+    autoFocus={opts.autoFocus}
+  />);
 };
 
 class LoginForm extends Component {
@@ -39,7 +43,7 @@ class LoginForm extends Component {
       <Form onSubmit={this.handleSubmit} className="login-form">
         <div className="login-logo-wrapper flex flex-c">
           <div className="login-logo"><img alt="" src="/logo.png" style={{ width: 120 }} /></div>
-          <div className="login-logo-text">组件开发</div>
+          <div className="login-logo-text">后台管理系统</div>
         </div>
         <FormItem>
           {createFormItem({
@@ -50,6 +54,7 @@ class LoginForm extends Component {
             label: '账号',
             name: 'username',
             max: 50,
+            autoFocus: true,
           })}
         </FormItem>
         <FormItem>
@@ -70,9 +75,6 @@ class LoginForm extends Component {
           <Button type="primary" htmlType="submit" className="login-form-button" loading={this.props.loading}>
             登录
           </Button>
-          <div className="login-fp">
-            <Link to="/FindPwd" className="login-form-forgot">忘记密码</Link>
-          </div>
         </FormItem>
       </Form>
     );

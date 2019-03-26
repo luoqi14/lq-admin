@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { message, Icon, Button } from 'antd';
-import { DetailPage, ImagePreview } from 'lq-component';
+import DetailPage from '../../../../components/DetailPage';
+import ImagePreview from '../../../../components/ImagePreview';
 import { formatMoney } from '../../../../util';
 
 class View extends Component {
@@ -16,9 +17,10 @@ class View extends Component {
       index,
       loadUser,
       user,
+      className,
     } = this.props;
     return (
-      <div style={{ width: '100%' }}>
+      <div style={{ width: '100%' }} className={className}>
         <ImagePreview
           visible={visible}
           images={this.props.imgs}
@@ -320,6 +322,7 @@ class View extends Component {
               disabled:true,
               long: true,
               mostPic: 5,
+              getToken: () => 'xxxxx',
               data: {
                 token: 'yL6CIGboqnDMqHcDM12eHdnqXVA7eYQbXpJ7uPbL:ysqnxpQCGZxc9GnQKpLFNpvOjV' +
                 '8=:eyJzY29wZSI6Inhpbmd1YW5nLWx1b3FpIiwiZGVhZGxpbmUiOjE1MTAzNDQzMTV9',
@@ -355,6 +358,7 @@ class View extends Component {
               beforeUpload: this.beforeUpload,
               action: 'http://gateway.dev.ops.com/tubobo-bdtools/common/photo/upload',
               getUrl: (res) => res.resultData,
+              getToken: () => 'xxxx',
               data: {
                 bucketType: 'private',
                 projectName: 'bdtools',
@@ -434,7 +438,7 @@ class View extends Component {
                   name: 'col2',
                 },
               ],
-              dataSource: [
+              value: [
                 {
                   id: '1',
                   col1: 'col1',

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Icon, Modal, Button, Row, Form } from 'antd';
 import { connect } from 'react-redux';
-import { createFormItem } from 'lq-component';
+import createFormItem from '../../components/createFormItem';
 import '../../styles/core.scss';
 import './CoreLayout.scss';
 import { common } from '../../store/common';

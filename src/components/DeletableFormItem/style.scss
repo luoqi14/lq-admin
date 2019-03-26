@@ -1,0 +1,61 @@
+.dynamicadddel {
+  position: relative;
+  .dynamic-del-btn {
+    position: absolute;
+    top: 4px;
+    right: -70px;
+  }
+  .dynamic-item {
+    position: relative;
+    clear: both;
+  }
+  .dynamic-item [class^=ant-col-]>.ant-form-item:only-child {
+    margin-bottom: 24px;
+  }
+  .dynamic-item [class^=ant-col-]>.ant-form-item.ant-form-item-with-help:only-child {
+    margin-bottom: 5px;
+  }
+  .dynamicadddel-close {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    position: absolute;
+    right: -30px;
+    top: -26px;
+    transition: .1s all;
+  }
+  .dynamicadddel-close:hover {
+    transform: scale(1.1);
+  }
+  .dynamicadddel-crossline {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 24px;
+    height: 1px;
+    background-color: #666;
+    transform-origin: 50%;
+    transition: .3s all;
+  }
+}
+
+.dynamic-item:hover {
+  .dynamicadddel-crossline {
+    opacity: 1;
+    transform: rotate(45deg);
+  }
+  .dynamicadddel-crossline + .dynamicadddel-crossline {
+    opacity: 1;
+    transform: rotate(-45deg);
+  }
+}
+
+.dynamicadddel-disabled {
+  .dynamic-del-btn {
+    display: none;
+  }
+  .dynamic-add-btn {
+    display: none;
+  }
+}

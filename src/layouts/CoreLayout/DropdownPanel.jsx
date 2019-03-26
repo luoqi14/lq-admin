@@ -20,16 +20,13 @@ class DropdownPanel extends Component {
     /* eslint-disable */
     const menu = (
       <Menu onClick={this.onMenuClick.bind(this)}>
-        <Menu.Item key="2">
-          <a>修改密码</a>
-        </Menu.Item>
         <Menu.Item key="3">
           <a
             tabIndex={0}
             role="button"
             onClick={(() => {
               Modal.confirm({
-                title: '确定要退出组件开发吗？',
+                title: '确定要退出后台管理系统吗？',
                 onOk: () => {
                   setTimeout(() => {
                     logout();

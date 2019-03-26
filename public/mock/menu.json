@@ -1,6 +1,6 @@
 {
-  "resultCode": "0",
-  "resultData": [
+  "success": true,
+  "payload": [
     {
       "id": "1",
       "name": "Dashboard",
@@ -75,6 +75,5 @@
         }
       ]
     }
-  ],
-  "resultDesc": "SUCCESS"
+  ]
 }

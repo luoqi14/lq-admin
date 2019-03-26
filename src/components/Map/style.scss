@@ -1,0 +1,23 @@
+#myPageTop {
+  position: absolute;
+  right: 10%;
+  font-size: 14px;
+  margin: 10px auto;
+  z-index: 1000;
+  width: 80%;
+  display: flex;
+  .ant-btn {
+    padding: 0 8px;
+  }
+}
+
+#tipinput {
+  width: 100%;
+  line-height: 14px;
+  padding-left: 4px;
+}
+
+.amap-sug-result {
+  border: none;
+  box-shadow: 0px 0px 1px #d1d1d1;
+}

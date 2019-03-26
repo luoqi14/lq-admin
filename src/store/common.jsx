@@ -1,6 +1,6 @@
 import { message, notification } from 'antd';
 import React from 'react';
-import fetch from 'lq-fetch';
+import fetch from '../util/fetch';
 import { history } from '../store/location';
 import { createAction } from '../util';
 import '../util/fix';
@@ -23,6 +23,7 @@ export const CLICK_MENU_ITEM = 'CLICK_MENU_ITEM';
 export const INIT_MENU = 'INIT_MENU';
 export const INIT_COMMON = 'INIT_COMMON';
 export const COLLAPSE_SUB_MENU = 'COLLAPSE_SUB_MENU';
+export const MENU_OPEN_CHANGE = 'MENU_OPEN_CHANGE';
 
 // ------------------------------------
 // Actions
@@ -99,6 +100,7 @@ export const common = {
       callAPI: () => fetch('/modifyPWD', newParams),
     };
   },
+  changeOpen: createAction(MENU_OPEN_CHANGE, 'openedKeys'),
 };
 
 // ------------------------------------
@@ -241,6 +243,10 @@ const ACTION_HANDLERS = {
   [COLLAPSE_SUB_MENU]: (state) => ({
     ...state,
     openedKeys: [],
+  }),
+  [MENU_OPEN_CHANGE]: (state, action) => ({
+    ...state,
+    openedKeys: action.openedKeys,
   }),
 };
 

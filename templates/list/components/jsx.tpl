@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { ListPage, Img } from '@f12/components';
 import { Popconfirm, Button } from 'antd';
+import ListPage from '../../../../components/ListPage';
+import Img from '../../../../components/Img';
 import { parseFields } from '../../../../util';
 
 class View extends Component {
@@ -28,12 +29,14 @@ class View extends Component {
   };
 
   renderAction = (text, record) => (record.status === 1
-    && (<Popconfirm
-      title="你确定要注销吗?"
-      onConfirm={this.props.lock.bind(this, { ids: [record.id] })}
-    >
-      <Button type="primary">注销</Button>
-    </Popconfirm>));
+      && (
+        <Popconfirm
+          title="你确定要注销吗?"
+          onConfirm={this.props.lock.bind(this, { ids: [record.id] })}
+        >
+          <Button type="primary">注销</Button>
+        </Popconfirm>
+      ));
 
   render() {
     const {

@@ -1,0 +1,116 @@
+.avatar-uploader {
+  text-align: center;
+  line-height: 12px;
+  .ant-upload {
+    width: 100%;
+    height: 100%;
+    display: block;
+    .img-name {
+      z-index: 10;
+      color: #62666C;
+    }
+    .img-wrapper {
+      position: relative;
+      color: #bfbfbf;
+    }
+    .img-watermark {
+      background: url(/logo-gray.png);
+      background-size: cover;
+    }
+  }
+  .ant-upload.ant-upload-select {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .3s all;
+    .ant-btn {
+      display: none;
+    }
+  }
+  .ant-upload.ant-upload-select:hover {
+    filter: opacity(0.8);
+    .ant-upload-preview {
+      display: block;
+    }
+  }
+  .ant-upload.ant-upload-select:not(.ant-upload-disabled):hover {
+    filter: opacity(0.8);
+    .ant-btn {
+      display: block;
+    }
+  }
+  .ant-upload.ant-upload-select.ant-upload-disabled {
+    cursor: default;
+  }
+
+  .ant-upload .anticon-plus {
+    font-size: 100px;
+    color: rgba(0,0,0,.1);
+    width: 100%;
+    height: 100%;
+  }
+
+  .ant-upload .ant-upload-close {
+    position: absolute;
+    right: 0;
+    background: rgba(255, 255, 255, 0.5);
+    top: 0;
+  }
+  .ant-upload .ant-upload-preview {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    top: 0;
+  }
+  .img-coverfix img {
+    height: auto!important;
+    width: 100%!important;
+  }
+}
+
+.idphoto-form-item>div {
+  display: inline-block;
+}
+.ant-row.ant-form-item.idphoto-form-item {
+  margin-bottom: 24px;
+}
+
+.idphoto-form-item .ant-form-explain {
+  position: absolute;
+}
+
+.has-error {
+  .imagepicker-container .ant-upload.ant-upload-select {
+    border: 1px solid #f04134;
+  }
+
+  .imagepicker-container .ant-input {
+    border: 1px solid #d9d9d9;
+  }
+
+  .imagepicker-container .ant-input[disabled] {
+    border: none;
+  }
+  .imagepicker-container .ant-calendar-picker-icon:after {
+    color: rgba(0,0,0,.43);
+  }
+}
+
+.imagepicker-container {
+  display: flex;
+  flex-flow: wrap;
+  .imagepicker-item-wrapper {
+    margin-bottom: 8px;
+    margin-right: 8px;
+  }
+  .fe-field-unit {
+    position: relative;
+    margin-top: -12px;
+  }
+  .img-extra {
+    text-align: center;
+  }
+}
+
+.imagepicker-container .ant-calendar-picker {
+  width: auto!important;
+}

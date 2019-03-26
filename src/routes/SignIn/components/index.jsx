@@ -12,7 +12,7 @@ class View extends Component {
   }
 
   render() {
-    const { from } = this.props.location.state || { from: { pathname: '/Manage' } };
+    const { from = { pathname: '/Manage' } } = this.props.location.state || {};
     if (localStorage.getItem('accessToken')) {
       return <Redirect to={from.pathname + (from.search || '')} />;
     }

@@ -1,5 +1,5 @@
-import { Message } from 'antd';
-import fetch from 'lq-fetch';
+import { message } from 'antd';
+import fetch from '../util/fetch';
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -66,7 +66,7 @@ const ACTION_HANDLERS = {
     return newState;
   },
   [DICT_FAILURE]: (state, action) => {
-    Message.error(action.payload);
+    message.error(action.payload);
     return {
       ...state,
     };

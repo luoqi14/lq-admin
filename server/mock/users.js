@@ -18,8 +18,8 @@ const users = mockjs.mock({
 
 router.post('/', (req, res) => {
   const params = req.body;
-  const pageSize = +params.pageSize || 10;
-  const pageNo = +params.pageNo || 1;
+  const limit = +params.limit || 10;
+  const offset = +params.offset || 0;
   const column = params.columnKey || 'createDatetime';
   const order = params.order || 'descend';
   const searchParams = [{
@@ -59,13 +59,13 @@ router.post('/', (req, res) => {
     }
     return a[column] < b[column] ? -1 : 1;
   });
-  const ret = list.slice((pageNo - 1) * pageSize, pageNo * pageSize);
+  const ret = list.slice(offset, offset + limit);
   const result = {
-    resultCode: '0',
-    resultDesc: '操作成功',
-    resultData: {
-      pageNo,
-      pageSize,
+    success: true,
+    msg: '操作成功',
+    payload: {
+      offset,
+      limit,
       total: list.length,
       list: ret,
     },
@@ -81,9 +81,9 @@ router.post('/lock', (req, res) => {
   const ret = list.filter((item) => ids.indexOf(item.id) > -1);
   ret.forEach((item) => { item.status = 2; });
   const result = {
-    resultCode: '0',
-    resultDesc: '操作成功',
-    resultData: ret,
+    success: true,
+    msg: '操作成功',
+    payload: ret,
   };
 
   res.json(result);

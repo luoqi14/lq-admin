@@ -1,5 +1,5 @@
 import moment from 'moment';
-import fetch from 'lq-fetch';
+import fetch from '../../../../util/fetch';
 import { createAction } from '../../../../util';
 
 // ------------------------------------

@@ -91,9 +91,6 @@ table tr td{
   .ant-menu-inline .ant-menu-submenu-title {
     font-size: 14px;
   }
-  .ant-menu-inline .ant-menu-item {
-    font-size: 12px;
-  }
   .ant-menu-dark.ant-menu-horizontal {
     border: none;
   }
@@ -148,6 +145,10 @@ table tr td{
     }
     .ant-col-pull-2 {
       right: 0;
+    }
+
+    .item-no-required .ant-form-item-label {
+      display: none;
     }
   }
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { ListPage, Img } from 'lq-component';
 import { Popconfirm, Button } from 'antd';
+import ListPage from '../../../../components/ListPage';
+import Img from '../../../../components/Img';
 import { parseFields } from '../../../../util';
 
 class View extends Component {
@@ -8,6 +9,7 @@ class View extends Component {
     this.props.loadUsers({
       ...this.props.searchParams,
       ...this.props.sorter,
+      ...this.props.page,
     });
   }
 
@@ -52,10 +54,12 @@ class View extends Component {
       clearSelectedKeys,
       columns,
       buttons,
+      className,
     } = this.props;
 
     return (
       <ListPage
+        className={className}
         columns={parseFields.call(this, columns)}
         breadcrumb={menuRouter}
         data={users}

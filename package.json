@@ -1,5 +1,5 @@
 {
-  "name": "lq-admin",
+  "name": "react-admin-pro",
   "version": "1.0.0",
   "description": "react16 + redux + router4 + antd3",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf build",
     "clean:map": "rimraf build/*.map",
-    "compile": "cross-env DEBUG=app:* node bin/compile && npm run clean:map",
+    "compile": "cross-env npm run clean && DEBUG=app:* node bin/compile",
     "compile:dev": "cross-env NODE_ENV=dev npm run compile",
     "compile:qafc": "cross-env NODE_ENV=qafc npm run compile",
     "compile:pre": "cross-env NODE_ENV=pre npm run compile",
@@ -32,9 +32,6 @@
     "antd": "^3.13.6",
     "babel-polyfill": "^6.26.0",
     "history": "^4.7.2",
-    "lq-component": "^1.0.0",
-    "lq-fetch": "^1.0.0",
-    "lq-tool": "^1.0.2",
     "moment": "^2.19.1",
     "react": "^16.4.1",
     "react-custom-scrollbars": "^4.2.0",

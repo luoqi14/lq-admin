@@ -1,5 +1,4 @@
-import { ArrayUtil } from 'lq-tool';
-import fetch from 'lq-fetch';
+import fetch from '../../../../util/fetch';
 import { createAction, mapToSendData, mapToAntdFields } from '../../../../util';
 import { moduleReducer } from '../../../../store/reducers';
 // ------------------------------------
@@ -46,8 +45,8 @@ const ACTION_HANDLERS = {
     users: action.data.list,
     loading: false,
     page: {
-      pageNo: action.data.pageNo,
-      pageSize: action.data.pageSize,
+      offset: action.data.offset,
+      limit: action.data.limit,
       total: action.data.total,
     },
     sorter: {
@@ -91,7 +90,7 @@ const ACTION_HANDLERS = {
       selectedRowKeys =
         Array.from(new Set(state.selectedRowKeys.concat(action.changedRows.map((item) => (item.id)))));
     } else {
-      selectedRowKeys = ArrayUtil.dislodge(state.selectedRowKeys, action.changedRows.map((item) => (item.id)));
+      selectedRowKeys = [];
     }
     return {
       ...state,
@@ -113,6 +112,10 @@ const initialState = {
   sorter: {
     columnKey: 'createDatetime',
     order: 'descend',
+  },
+  page: {
+    offset: 0,
+    limit: 10,
   },
   selectedRowKeys: [],
   columns: [

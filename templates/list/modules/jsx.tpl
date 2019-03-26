@@ -1,5 +1,4 @@
-import { ArrayUtil } from '@xinguang/common-tool';
-import fetch from '@f12/fetch';
+import fetch from '../../../../util/fetch';
 import { createAction, mapToSendData, mapToAntdFields } from '../../../../util';
 // ------------------------------------
 // Constants
@@ -166,7 +165,7 @@ const ACTION_HANDLERS = {
       selectedRowKeys =
         Array.from(new Set(state.selectedRowKeys.concat(action.changedRows.map((item) => (item.id)))));
     } else {
-      selectedRowKeys = ArrayUtil.dislodge(state.selectedRowKeys, action.changedRows.map((item) => (item.id)));
+      selectedRowKeys = [];
     }
     return {
       ...state,

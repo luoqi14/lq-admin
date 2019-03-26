@@ -12,11 +12,69 @@
     transform: translate(-50%, -50%);
     border-radius: 2px;
     transition: all .3s;
+    opacity: 0;
   }
   .img-click {
     cursor: pointer;
   }
-  .img-click:hover {
-    filter: opacity(0.8);
+  @keyframes card-loading {
+    0%,100% {
+      background-position: 0 50%
+    }
+
+    50% {
+      background-position: 100% 50%
+    }
+  }
+  .img-skeleton-loading {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(207,216,220,0.2), rgba(207,216,220,0.4), rgba(207,216,220,0.2));
+    animation: card-loading 1.4s ease infinite;
+    background-size: 600% 600%;
+  }
+  .img-loading-container {
+    width: 160px;
+    height: 160px;
+    border: 10px solid #fff;
+    border-radius: 10px;
+    opacity: .8;
+    position: relative;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+  }
+  .img-loading-circle {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    top: 20%;
+    position: absolute;
+    left: 20%;
+  }
+  .img-loading-triangle {
+    width: 0;
+    height: 0;
+    border-left: 32px solid transparent;
+    border-right: 32px solid transparent;
+    border-bottom: 55.36px solid #fff;
+    position: absolute;
+    bottom: 20%;
+    right: 20%;
+  }
+  .img-loading-triangle1 {
+    width: 0;
+    height: 0;
+    border-left: 32px solid transparent;
+    border-right: 32px solid transparent;
+    border-bottom: 55.36px solid #fff;
+    position: absolute;
+    left: 10%;
+    bottom: 20%;
+    transform: scale(.618);
+    transform-origin: bottom;
   }
 }
+

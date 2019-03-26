@@ -17,7 +17,7 @@
 
 ## Start
   ```bash
-  git clone https://github.com/luoqi14/lq-admin
+  git clone z
   cd lq-admin && npm i --sass_binary_site=https://npm.taobao.org/mirrors/node-sass
   ```
 

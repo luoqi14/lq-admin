@@ -3,7 +3,7 @@ import Animate from 'rc-animate';
 import { Icon } from 'antd';
 import './minimize.scss';
 
-const minimize = (Cmp) => {
+const minimize = Cmp => {
   class MinimizeDecorator extends Component {
     constructor(props) {
       super(props);
@@ -21,26 +21,10 @@ const minimize = (Cmp) => {
           transitionName="slide-up"
           className={expanded ? '' : 'container-collapsed'}
         >
-          {
-            expanded ? (
-              <Cmp {...this.props} {...this.state}>
-                <a
-                  className="indicator-container"
-                  role="button"
-                  tabIndex={-1}
-                  key="indicator"
-                  onClick={() => {
-                    this.setState({
-                      expanded: !this.state.expanded,
-                    });
-                  }}
-                >
-                  <Icon type="up-square-o" className="indicator" />
-                </a>
-              </Cmp>
-            ) : (
+          {expanded ? (
+            <Cmp {...this.props} {...this.state}>
               <a
-                className="indicator-container indicator-collapsed"
+                className="indicator-container"
                 role="button"
                 tabIndex={-1}
                 key="indicator"
@@ -50,10 +34,24 @@ const minimize = (Cmp) => {
                   });
                 }}
               >
-                <Icon type="down-square-o" className="indicator" />
+                <Icon type="up-square-o" className="indicator" />
               </a>
-            )
-          }
+            </Cmp>
+          ) : (
+            <a
+              className="indicator-container indicator-collapsed"
+              role="button"
+              tabIndex={-1}
+              key="indicator"
+              onClick={() => {
+                this.setState({
+                  expanded: !this.state.expanded,
+                });
+              }}
+            >
+              <Icon type="down-square-o" className="indicator" />
+            </a>
+          )}
         </Animate>
       );
     }

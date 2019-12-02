@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 export default class Search extends Component {
   static propTypes = {
     onSearch: PropTypes.func,
-  }
+  };
 
   static defaultProps = {
     onSearch: undefined,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -32,20 +32,18 @@ export default class Search extends Component {
   }
 
   handleSearch(value) {
-    const {
-      onSearch,
-      form,
-      name,
-    } = this.props;
-    form.validateFieldsAndScroll([name], (error) => {
-      if (!error) {
-        onSearch(value);
-      }
-    });
+    const { onSearch, form, name } = this.props;
+    form &&
+      form.validateFieldsAndScroll([name], error => {
+        if (!error) {
+          onSearch(value);
+        }
+      });
   }
 
-  handleChange(value) {
-    this.props.onChange(value);
+  handleChange(e) {
+    this.props.onChange(e.target.value);
+    this.setState({ value: e.target.value });
   }
 
   render() {

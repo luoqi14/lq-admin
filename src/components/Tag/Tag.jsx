@@ -7,9 +7,9 @@ export default class EditableTagGroup extends Component {
     inputValue: '',
   };
 
-  handleClose = (removedTag) => {
+  handleClose = removedTag => {
     let value = this.props.value || [];
-    value = value.filter((tag) => tag !== removedTag);
+    value = value.filter(tag => tag !== removedTag);
     this.props.onChange(value);
   };
 
@@ -17,16 +17,14 @@ export default class EditableTagGroup extends Component {
     this.setState({ inputVisible: true }, () => this.input.focus());
   };
 
-  handleInputChange = (e) => {
+  handleInputChange = e => {
     this.setState({ inputValue: e.target.value });
   };
 
   handleInputConfirm = () => {
     const state = this.state;
     const inputValue = state.inputValue;
-    let {
-      value,
-    } = this.props;
+    let { value } = this.props;
     value = value || [];
     if (inputValue && value.indexOf(inputValue) === -1) {
       value = [...value, inputValue];
@@ -38,30 +36,39 @@ export default class EditableTagGroup extends Component {
     this.props.onChange(value);
   };
 
-  saveInputRef = (input) => {
+  saveInputRef = input => {
     this.input = input;
   };
 
   render() {
     const { inputVisible, inputValue } = this.state;
-    const {
-      placeholder = 'New Tag',
-      disabled,
-    } = this.props;
-    let {
-      value,
-    } = this.props;
+    const { placeholder = 'New Tag', disabled } = this.props;
+    const wrongValueArray = this.props.wrongValueArray || [];
+    let { value } = this.props;
     value = value || [];
     return (
       <div>
-        {value.map((tag) => {
+        {value.map(t => {
+          const tag = t || '';
           const isLongTag = tag.length > 20;
+          const isWrong = wrongValueArray.indexOf(tag) !== -1;
           const tagElem = (
-            <Tag key={tag} closable={!disabled} afterClose={() => this.handleClose(tag)}>
+            <Tag
+              key={tag}
+              style={isWrong ? { background: 'red', color: 'white' } : {}}
+              closable={!disabled}
+              onClose={() => this.handleClose(tag)}
+            >
               {isLongTag ? `${tag.slice(0, 20)}...` : tag}
             </Tag>
           );
-          return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
+          return isLongTag ? (
+            <Tooltip title={tag} key={tag}>
+              {tagElem}
+            </Tooltip>
+          ) : (
+            tagElem
+          );
         })}
         {!disabled && inputVisible && (
           <Input

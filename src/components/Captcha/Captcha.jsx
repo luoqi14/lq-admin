@@ -11,7 +11,7 @@ export default class Captcha extends Component {
     count: PropTypes.number,
     disabled: PropTypes.bool,
     size: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
     placeholder: undefined,
@@ -19,7 +19,7 @@ export default class Captcha extends Component {
     count: 60,
     disabled: false,
     size: 'default',
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -58,7 +58,7 @@ export default class Captcha extends Component {
       ...this.state,
       loading: true,
     });
-    this.props.onClick().then((isSuccess) => {
+    this.props.onClick().then(isSuccess => {
       this.setState({
         ...this.state,
         loading: false,
@@ -89,13 +89,7 @@ export default class Captcha extends Component {
   timer;
 
   render() {
-    const {
-      placeholder,
-      icon,
-      disabled,
-      size,
-      value,
-    } = this.props;
+    const { placeholder, icon, disabled, size, value } = this.props;
 
     return (
       <Row span={24} style={{ textAlign: 'right' }} type="flex" align="middle">
@@ -109,8 +103,7 @@ export default class Captcha extends Component {
             value={value}
           />
         </Col>
-        {
-          !disabled &&
+        {!disabled && (
           <Col className="captcha-btn-wrapper flex">
             <Button
               size={size}
@@ -123,8 +116,7 @@ export default class Captcha extends Component {
               {this.state.text}
             </Button>
           </Col>
-        }
-
+        )}
       </Row>
     );
   }

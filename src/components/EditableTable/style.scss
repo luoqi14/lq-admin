@@ -1,0 +1,15 @@
+.editable-table {
+  .editable-cell-value-wrap {
+    cursor: pointer;
+    min-height: 20px;
+  }
+  .ant-table-row:hover .editable-cell-value-wrap {
+    box-shadow: 0 0 1px 1px #d9d9d9;
+    border-radius: 4px;
+  }
+  .ant-table.ant-table-small {
+    .ant-form-item-control {
+      line-height: inherit;
+    }
+  }
+}

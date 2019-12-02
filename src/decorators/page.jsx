@@ -3,8 +3,7 @@ import { Breadcrumb } from 'antd';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-
-const page = (Cmp) => {
+const page = Cmp => {
   class PageDecorator extends Component {
     static propTypes = {
       title: PropTypes.string,
@@ -15,10 +14,7 @@ const page = (Cmp) => {
       title: '',
     };
     render() {
-      const {
-        title,
-        location,
-      } = this.props;
+      const { title, location } = this.props;
 
       let parentRoute;
       if (location.state && location.state.path) {
@@ -33,14 +29,14 @@ const page = (Cmp) => {
             {!parentRoute && title}
             {parentRoute && (
               <Breadcrumb separator=">">
-                <Breadcrumb.Item><Link to={parentRoute.path}>{parentRoute.title}</Link></Breadcrumb.Item>
+                <Breadcrumb.Item>
+                  <Link to={parentRoute.path}>{parentRoute.title}</Link>
+                </Breadcrumb.Item>
                 <Breadcrumb.Item>{title}</Breadcrumb.Item>
               </Breadcrumb>
             )}
           </div>
-          <Cmp
-            {...this.props}
-          />
+          <Cmp {...this.props} />
         </div>
       );
     }

@@ -5,21 +5,17 @@
 // ------------------------------------
 // Actions
 // ------------------------------------
-export const actions = {
-};
+export const actions = {};
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
-const ACTION_HANDLERS = {
-
-};
+const ACTION_HANDLERS = {};
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {
-};
+const initialState = {};
 
 export default function reducer(state = initialState, action = {}) {
   const handler = ACTION_HANDLERS[action.type];

@@ -14,10 +14,7 @@ class View extends Component {
   }
 
   btnClick = () => {
-    const {
-      lockUser,
-      selectedRowKeys,
-    } = this.props;
+    const { lockUser, selectedRowKeys } = this.props;
     lockUser({ ids: selectedRowKeys, multi: true });
   };
 
@@ -25,19 +22,19 @@ class View extends Component {
     return this.props.selectedRowKeys.length === 0;
   };
 
-  renderImg = (url) => {
+  renderImg = url => {
     return <Img src={url} />;
   };
 
-  renderAction = (text, record) => (record.status === 1
-    && (
+  renderAction = (text, record) =>
+    record.status === 1 && (
       <Popconfirm
         title="你确定要注销吗?"
         onConfirm={this.props.lockUser.bind(this, { ids: [record.id] })}
       >
         <Button type="primary">注销</Button>
       </Popconfirm>
-    ));
+    );
 
   render() {
     const {
@@ -74,7 +71,7 @@ class View extends Component {
           selectedRowKeys,
           selectRows,
           clearSelectedKeys,
-          getCheckboxProps: (record) => ({
+          getCheckboxProps: record => ({
             disabled: record.status === 2,
           }),
         }}

@@ -13,27 +13,27 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HappyPack = require('happypack');
 const os = require('os');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 
-const { __LOCAL__ } = project.globals;
+const { __LOCAL__, __ONLINE__ } = project.globals;
 
 debug('Creating configuration.');
 
 const mode = __LOCAL__ ? 'development' : 'production';
 
 const webpackConfig = {
-  devtool : project.compiler_devtool,
-  resolve : {
-    // 1 to 2
-    // root       : project.paths.client(),
+  devtool: project.compiler_devtool,
+  resolve: {
     modules: [
       project.paths.client(),
       path.resolve(__dirname, '../node_modules'),
     ],
-    extensions : ['*', '.js', '.jsx', '.json'],
+    extensions: ['*', '.js', '.jsx', '.json'],
   },
-  module : {
+  module: {
     rules: [],
   },
   mode,
@@ -66,25 +66,30 @@ if (!__LOCAL__) {
             drop_console: true,
           },
         },
-        sourceMap: false,
-      })],
+        sourceMap: true,
+      }),
+    ],
   });
 }
 
 webpackConfig.entry = {
-  app : __LOCAL__
-    ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${project.compiler_public_path}__webpack_hmr`)
+  app: __LOCAL__
+    ? [APP_ENTRY].concat(
+        `webpack-hot-middleware/client?path=${project.compiler_public_path}__webpack_hmr`
+      )
     : [APP_ENTRY],
-  vendor : project.compiler_vendors,
+  vendor: project.compiler_vendors,
 };
 
 // ------------------------------------
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename   : __LOCAL__ ? '[name].js' : `[name].[${project.compiler_hash_type}].js`,
-  path       : project.paths.dist(),
-  publicPath : project.compiler_public_path,
+  filename: __LOCAL__
+    ? '[name].js'
+    : `[name][${project.compiler_hash_type}].js`,
+  path: project.paths.dist(),
+  publicPath: project.compiler_public_path,
 };
 
 // ------------------------------------
@@ -101,23 +106,26 @@ webpackConfig.externals['react/addons'] = true;
 webpackConfig.plugins = [
   new webpack.DefinePlugin(project.globals),
   new HtmlWebpackPlugin({
-    template : project.paths.client('index.html'),
-    hash     : false,
-    favicon  : project.paths.public('favicon.ico'),
-    filename : 'index.html',
-    inject   : false,
+    template: project.paths.client('index.html'),
+    hash: false,
+    favicon: project.paths.public('favicon.ico'),
+    filename: 'index.html',
+    inject: false,
     chunksSortMode: 'manual',
-    minify   : {
-      collapseWhitespace : true,
+    minify: {
+      collapseWhitespace: true,
     },
     chunks: ['vendor', 'app'],
+    environment: process.env.NODE_ENV,
   }),
   new HappyPack({
     id: 'happyBabel',
-    loaders: [{
-      loader: 'babel-loader',
-      cacheDirectory:  true,
-    }],
+    loaders: [
+      {
+        loader: 'babel-loader',
+        cacheDirectory: true,
+      },
+    ],
     threadPool: happyThreadPool,
     verboseWhenProfiling: true,
   }),
@@ -125,14 +133,28 @@ webpackConfig.plugins = [
 
 if (__LOCAL__) {
   debug('Enabling plugins for live development (HMR).');
+  // webpackConfig.plugins.push(new BundleAnalyzerPlugin());
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-  webpackConfig.plugins.push(new AddAssetHtmlPlugin({
-    filepath: require.resolve('../dll/vendor.dll.js'),
-    includeSourcemap: false,
-  }));
-  webpackConfig.plugins.push(new webpack.DllReferencePlugin({
-    manifest: path.join(__dirname, '../dll/manifest.json'),
-  }));
+  webpackConfig.plugins.push(
+    new AddAssetHtmlPlugin({
+      filepath: require.resolve('../dll/vendor.dll.js'),
+      includeSourcemap: false,
+    })
+  );
+  webpackConfig.plugins.push(
+    new webpack.DllReferencePlugin({
+      manifest: path.join(__dirname, '../dll/manifest.json'),
+    })
+  );
+}
+
+if (__ONLINE__) {
+  webpackConfig.plugins.push(
+    new SentryWebpackPlugin({
+      ignore: ['../node_modules', 'webpack.config.js'],
+      include: './build',
+    })
+  );
 }
 
 // ------------------------------------
@@ -140,8 +162,8 @@ if (__LOCAL__) {
 // ------------------------------------
 // JavaScript / JSON
 webpackConfig.module.rules.push({
-  test    : /\.(js|jsx)$/,
-  exclude : /node_modules/,
+  test: /\.(js|jsx)$/,
+  exclude: /node_modules/,
   use: 'happypack/loader?id=happyBabel',
 });
 
@@ -149,9 +171,9 @@ webpackConfig.module.rules.push({
 if (__LOCAL__) {
   webpackConfig.module.rules.push({
     enforce: 'pre',
-    test    : /\.(js|jsx)$/,
+    test: /\.(js|jsx)$/,
     include: path.join(__dirname, '../src'),
-    loader  : 'eslint-loader',
+    loader: 'eslint-loader',
   });
 }
 
@@ -173,7 +195,7 @@ const cssLoader = {
         browsers: ['last 2 versions'],
       },
       discardComments: {
-        removeAll : true,
+        removeAll: true,
       },
       discardUnused: false,
       mergeIdents: false,
@@ -186,10 +208,7 @@ const cssLoader = {
 
 webpackConfig.module.rules.push({
   test: /\.css$/,
-  use: [
-    ...cssExtraLoader,
-    cssLoader,
-  ],
+  use: [...cssExtraLoader, cssLoader],
 });
 
 webpackConfig.module.rules.push({
@@ -201,7 +220,7 @@ webpackConfig.module.rules.push({
       loader: 'less-loader',
       options: {
         modifyVars: {
-          '@primary-color': '#3373CC',
+          '@primary-color': '#178bfb',
           '@icon-url': '"/iconfont/iconfont"',
         },
       },
@@ -224,25 +243,27 @@ webpackConfig.module.rules.push({
       loader: '@epegzz/sass-vars-loader',
       options: {
         vars: {
-          'primary-color': '#3373CC',
+          'primary-color': '#178bfb',
         },
       },
     },
   ],
 });
 
-webpackConfig.plugins.push(new MiniCssExtractPlugin({
-  filename: __LOCAL__ ? '[name].css' : '[name].[contenthash].css',
-  chunkFilename: __LOCAL__ ? '[id].css' : '[id].[contenthash].css',
-}));
+webpackConfig.plugins.push(
+  new MiniCssExtractPlugin({
+    filename: __LOCAL__ ? '[name].css' : '[name][contenthash].css',
+    chunkFilename: __LOCAL__ ? '[id].css' : '[id][contenthash].css',
+  })
+);
 
 // Images
 // ------------------------------------
 webpackConfig.module.rules.push({
-  test    : /\.(png|jpg|gif)$/,
-  loader  : 'url-loader',
-  options : {
-    limit : 8192,
+  test: /\.(png|jpg|gif)$/,
+  loader: 'url-loader',
+  options: {
+    limit: 8192,
   },
 });
 
@@ -255,16 +276,16 @@ webpackConfig.module.rules.push({
   ['ttf', 'application/octet-stream'],
   ['eot', 'application/vnd.ms-fontobject'],
   ['svg', 'image/svg+xml'],
-].forEach((font) => {
+].forEach(font => {
   const extension = font[0];
   const mimetype = font[1];
 
   webpackConfig.module.rules.push({
-    test    : new RegExp(`\\.${extension}$`),
-    loader  : 'url-loader',
-    options : {
-      name  : 'fonts/[name].[ext]',
-      limit : 10000,
+    test: new RegExp(`\\.${extension}$`),
+    loader: 'url-loader',
+    options: {
+      name: 'fonts/[name].[ext]',
+      limit: 10000,
       mimetype,
     },
   });

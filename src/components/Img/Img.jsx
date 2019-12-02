@@ -11,6 +11,7 @@ class Img extends Component {
     height: PropTypes.number,
     src: PropTypes.string,
     adjust: PropTypes.bool,
+    style: PropTypes.object,
   };
 
   static defaultProps = {
@@ -18,6 +19,7 @@ class Img extends Component {
     height: 64,
     src: '',
     adjust: false,
+    style: {},
   };
 
   constructor(props) {
@@ -46,35 +48,45 @@ class Img extends Component {
     imgContainer.style.opacity = 0;
     let imgWidth;
     let imgHeight;
-    if ((img.naturalHeight > img.naturalWidth) || (img.height > img.width)) {
+    if (img.naturalHeight > img.naturalWidth || img.height > img.width) {
       imgWidth = this.props.width;
       imgHeight = 'auto';
     } else {
       imgWidth = 'auto';
       imgHeight = this.props.height;
     }
-    this.setState(Object.assign({}, this.state, {
-      imgWidth,
-      imgHeight,
-      loaded: true,
-      naturalHeight: img.naturalHeight || img.height,
-      naturalWidth:  img.naturalWidth || img.width,
-    }));
+    this.setState(
+      Object.assign({}, this.state, {
+        imgWidth,
+        imgHeight,
+        loaded: true,
+        naturalHeight: img.naturalHeight || img.height,
+        naturalWidth: img.naturalWidth || img.width,
+      })
+    );
     imgContainer.style.opacity = 1;
     img.style.opacity = 1;
     img.style.background = '#fff';
   }
 
   onPreview() {
-    this.setState(Object.assign({}, this.state, {
-      previewVisible: true,
-    }));
+    if (this.props.onPreview) {
+      this.props.onPreview();
+    } else {
+      this.setState(
+        Object.assign({}, this.state, {
+          previewVisible: true,
+        })
+      );
+    }
   }
 
   onPicCancel() {
-    this.setState(Object.assign({}, this.state, {
-      previewVisible: false,
-    }));
+    this.setState(
+      Object.assign({}, this.state, {
+        previewVisible: false,
+      })
+    );
   }
 
   // renderSrc = () => {
@@ -86,14 +98,9 @@ class Img extends Component {
   // };
 
   render() {
-    const {
-      adjust,
-    } = this.props;
+    const { adjust, style } = this.props;
 
-    let {
-      width,
-      height,
-    } = this.props;
+    let { width, height } = this.props;
 
     const {
       previewVisible,
@@ -103,7 +110,8 @@ class Img extends Component {
       naturalWidth,
     } = this.state;
 
-    const emptyImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADIBAMAAABfdrOtAAAAJFBMVEXo6uvo6uvp6urp6uv////4+fn29vb09PXv8PD6+/vs7e7x8vLKLZQ8AAAAA3RSTlPWv6Gx/qxVAAAB4klEQVR42u3cT07CQBTHcRJPoDfwBiaI/eOSV6FlKZ6gbHTbJrqnC/ftDQqJ+3JAmQabV03LxL5nhPy+G0i6+ABlpkwnYXR9qd7V6GKs3g0QIF8BAQIECBAgQHhAgAABAgQIEB4QIECAAAEChAfk14jzZFUyCCnIqnAIck+WVQMQxxZJBiB3tkh8Akj4erRiMBKMj7YEAgTI2SEfb/rIdv+0VEZ82hcpI55BAmVkR6a1LrKskUQXKWokVn8n+khaI5UusqkRdihWQBxjLNiRucaIX7W/XFmogbjP4Qs7QlSpz8ITolwdSYkWegibLrURzyCJMrIyyFQXcck000Vuqa5URZZUF2shfCUZySN+M/o2BySQR7zgx7q7FEdSSr4viXNpxG/OQdYgc2nEa+47UFOocT2JDxNwUyWLuM3Hs2NIrnGNL825Yc00fhI9mnPDE0Wc5pWnxEukED7I1y61iqQQPshzr408SCF8kAcralfKIRl1FcshRScSCSHmobNADMmou1II8amnXAiZ9CFzISTtQ0IZxKfeKhHE60emJ3cDB4gNEr4frTiNDYEzQfR2gni2SDkE2doZi/G/38wEAgQIECAsIECAAAECBAgPCBAgQIAAAcIDAgQIECAG+ZO/oPsErirrtEkZgvQAAAAASUVORK5CYII=';
+    const emptyImg =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADIBAMAAABfdrOtAAAAJFBMVEXo6uvo6uvp6urp6uv////4+fn29vb09PXv8PD6+/vs7e7x8vLKLZQ8AAAAA3RSTlPWv6Gx/qxVAAAB4klEQVR42u3cT07CQBTHcRJPoDfwBiaI/eOSV6FlKZ6gbHTbJrqnC/ftDQqJ+3JAmQabV03LxL5nhPy+G0i6+ABlpkwnYXR9qd7V6GKs3g0QIF8BAQIECBAgQHhAgAABAgQIEB4QIECAAAEChAfk14jzZFUyCCnIqnAIck+WVQMQxxZJBiB3tkh8Akj4erRiMBKMj7YEAgTI2SEfb/rIdv+0VEZ82hcpI55BAmVkR6a1LrKskUQXKWokVn8n+khaI5UusqkRdihWQBxjLNiRucaIX7W/XFmogbjP4Qs7QlSpz8ITolwdSYkWegibLrURzyCJMrIyyFQXcck000Vuqa5URZZUF2shfCUZySN+M/o2BySQR7zgx7q7FEdSSr4viXNpxG/OQdYgc2nEa+47UFOocT2JDxNwUyWLuM3Hs2NIrnGNL825Yc00fhI9mnPDE0Wc5pWnxEukED7I1y61iqQQPshzr408SCF8kAcralfKIRl1FcshRScSCSHmobNADMmou1II8amnXAiZ9CFzISTtQ0IZxKfeKhHE60emJ3cDB4gNEr4frTiNDYEzQfR2gni2SDkE2doZi/G/38wEAgQIECAsIECAAAECBAgPCBAgQIAAAcIDAgQIECAG+ZO/oPsErirrtEkZgvQAAAAASUVORK5CYII=';
 
     const src = this.props.src || emptyImg; // null also has default value
     const clickable = src !== emptyImg;
@@ -114,11 +122,9 @@ class Img extends Component {
     }
 
     return (
-      <div
-        className="img-container"
-        style={{ width, height }}
-      >
+      <div className="img-container" style={{ ...style, width, height }}>
         <img
+          loading="lazy"
           ref="img"
           className={`img-img${clickable ? ' img-click' : ''}`}
           alt=""
@@ -131,11 +137,17 @@ class Img extends Component {
             }
           }}
         />
-        { !this.state.loaded && (
+        {!this.state.loaded && (
           <div className="img-skeleton-loading">
             <div
               style={{
-                transform: `translate(-50%,-50%) scale(${(Math.min(width, height, 160) / 160) - 0.15})`,
+                transform: `translate(-50%,-50%) scale(${Math.min(
+                  width,
+                  height,
+                  160
+                ) /
+                  160 -
+                  0.15})`,
               }}
               className="img-loading-container"
             >
@@ -145,7 +157,11 @@ class Img extends Component {
             </div>
           </div>
         )}
-        <Modal visible={previewVisible} footer={null} onCancel={this.onPicCancel.bind(this)}>
+        <Modal
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.onPicCancel.bind(this)}
+        >
           <img alt="" style={{ width: '100%' }} src={src} />
         </Modal>
       </div>

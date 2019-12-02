@@ -3,11 +3,7 @@ import React, { Component } from 'react';
 const list = (Cmp, id) => {
   class ListDecorator extends Component {
     componentDidMount() {
-      const {
-        load,
-        searchParams,
-        page,
-      } = this.props;
+      const { load, searchParams, page } = this.props;
       const params = {
         ...searchParams,
         ...page,

@@ -6,13 +6,19 @@ import PrivateRoute from '../../components/PrivateRoute';
 
 const Routes = () => (
   <Switch>
-    <PrivateRoute key="Tpl" exact path="/Manage/Tpl" component={asyncComponent(() => import('./Tpl'))} />
-    <PrivateRoute key="BasicDetail" exact path="/Manage/BasicDetail" component={asyncComponent(() => import('./BasicDetail'))} />
-    <PrivateRoute key="SearchList" exact path="/Manage/SearchList" component={asyncComponent(() => import('./SearchList'))} />
-    <PrivateRoute key="TplDetail" exact path="/Manage/TplDetail/:id" component={asyncComponent(() => import('./TplDetail'))} />
-    <Redirect exact from="/" to="/Manage" />
-    <Redirect exact from="/Manage" to="/Manage/BasicDetail" />
-    <Redirect to="/404" />
+    <PrivateRoute
+      key="SearchList"
+      exact
+      path="/Manage/SearchList"
+      component={asyncComponent(() => import('./SearchList'))}
+    />
+    <PrivateRoute
+      key="BasicDetail"
+      exact
+      path="/Manage/BasicDetail"
+      component={asyncComponent(() => import('./BasicDetail'))}
+    />
+    <Redirect from="/Manage/*" to="/404" />
   </Switch>
 );
 

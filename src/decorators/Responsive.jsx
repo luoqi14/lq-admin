@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const respond = (Cmp) => {
+const respond = Cmp => {
   class ResponsiveDecorator extends Component {
     constructor(props) {
       super(props);
@@ -9,7 +9,7 @@ const respond = (Cmp) => {
         expand: document.body.clientWidth > 768,
       };
 
-      this.responsiveHandler = (e) => {
+      this.responsiveHandler = e => {
         if (e.matches) {
           this.setState({
             expand: false,

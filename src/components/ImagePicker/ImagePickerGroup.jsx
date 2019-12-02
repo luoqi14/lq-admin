@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Col } from 'antd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
 import ImagePicker from './ImagePicker';
 import './style.scss';
@@ -7,10 +8,7 @@ import unit from '../decorators/unit';
 
 class ImagePickerGroup extends Component {
   static propTypes = {
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.array,
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
     tokenSeparators: PropTypes.string,
     disabled: PropTypes.bool,
     action: PropTypes.string,
@@ -19,19 +17,18 @@ class ImagePickerGroup extends Component {
     getToken: PropTypes.func,
     getUrl: PropTypes.func,
     single: PropTypes.bool,
-    data: PropTypes.object,
+    data: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
     mostPic: PropTypes.number,
     type: PropTypes.string,
     onPreview: PropTypes.func,
-    text: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.element,
-    ]),
+    text: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     headers: PropTypes.object,
     fullValue: PropTypes.bool,
     fieldNames: PropTypes.object,
     showName: PropTypes.bool,
-  }
+    beforeUpload: PropTypes.func,
+    adjust: PropTypes.bool,
+  };
 
   static defaultProps = {
     tokenSeparators: undefined,
@@ -43,7 +40,7 @@ class ImagePickerGroup extends Component {
     single: false,
     data: {},
     mostPic: 10000,
-    type: '',
+    type: 'image',
     onPreview: undefined,
     text: '',
     headers: undefined,
@@ -53,13 +50,16 @@ class ImagePickerGroup extends Component {
       name: 'name',
     },
     showName: false,
-  }
+    beforeUpload: undefined,
+    adjust: false,
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       items: props.value || [],
+      blankShow: true,
     };
     this.fullValue = this.formatValues(this.state.items);
   }
@@ -76,16 +76,12 @@ class ImagePickerGroup extends Component {
   }
 
   onChange(value, fullValue) {
-    const {
-      tokenSeparators,
-    } = this.props;
+    const { tokenSeparators } = this.props;
     let items = this.state.items;
     if (typeof this.state.items === 'string') {
       items = this.state.items && this.state.items.split(tokenSeparators);
     }
-    items = [
-      ...items,
-    ];
+    items = [...items];
     items[value.key] = value.value;
     this.fullValue[value.key] = fullValue;
     this.props.onChange(this.parseValues(items));
@@ -93,16 +89,12 @@ class ImagePickerGroup extends Component {
   }
 
   onClose(seq) {
-    const {
-      tokenSeparators,
-    } = this.props;
+    const { tokenSeparators } = this.props;
     let items = this.state.items;
     if (typeof this.state.items === 'string') {
       items = this.state.items && this.state.items.split(tokenSeparators);
     }
-    items = [
-      ...items,
-    ];
+    items = [...items];
 
     items.splice(seq, 1);
 
@@ -116,11 +108,48 @@ class ImagePickerGroup extends Component {
     this.props.afterChange && this.props.afterChange(this.fullValue);
   }
 
+  onDragStart() {
+    this.setState({
+      blankShow: false,
+    });
+  }
+
+  onDragEnd(result) {
+    // dropped outside the list
+    this.setState({
+      blankShow: true,
+    });
+    if (!result.destination) {
+      return;
+    }
+
+    const reorder = (list, startIndex, endIndex) => {
+      let newList = list;
+      if (typeof newList === 'string') {
+        newList = [newList];
+      }
+      const res = Array.from(newList);
+      const [removed] = res.splice(startIndex, 1);
+      res.splice(endIndex, 0, removed);
+
+      return res;
+    };
+
+    const items = reorder(
+      this.state.items,
+      result.source.index,
+      result.destination.index
+    );
+
+    this.setState({
+      items,
+    });
+    this.props.onChange(this.parseValues(items));
+  }
+
   formatValues(items) {
     let newItems = items;
-    const {
-      tokenSeparators,
-    } = this.props;
+    const { tokenSeparators } = this.props;
     if (tokenSeparators && newItems.length !== 0) {
       newItems = newItems.toString().split(tokenSeparators);
     } else if (typeof items === 'string') {
@@ -131,10 +160,7 @@ class ImagePickerGroup extends Component {
 
   parseValues(items) {
     let newItems = items;
-    const {
-      tokenSeparators,
-      fullValue,
-    } = this.props;
+    const { tokenSeparators, fullValue } = this.props;
     if (fullValue) {
       return this.fullValue;
     }
@@ -148,10 +174,7 @@ class ImagePickerGroup extends Component {
     const defaultValue = {
       value: '',
     };
-    const items = [
-      ...this.state.items,
-      defaultValue,
-    ];
+    const items = [...this.state.items, defaultValue];
     this.setState({
       ...this.state,
       items,
@@ -178,53 +201,97 @@ class ImagePickerGroup extends Component {
       fieldNames,
       showName,
       extras = [],
+      beforeUpload,
+      adjust,
     } = this.props;
 
-    let {
-      mostPic,
-    } = this.props;
+    let { mostPic } = this.props;
+
+    const getListStyle = isDraggingOver => ({
+      background: isDraggingOver ? 'rgba(0, 0, 0, 0.05)' : 'white',
+      display: 'flex',
+      width: '100%',
+      overflow: 'auto',
+      transition: 'all .2s',
+    });
+
+    const getItemStyle = (draggableStyle, isDragging) => ({
+      userSelect: 'none',
+      opacity: isDragging ? 0.6 : 1,
+      background: 'transparent',
+      ...draggableStyle,
+    });
 
     const createItems = () => {
       let items = this.state.items;
       items = this.formatValues(items);
+      items = items.slice(0, this.props.mostPic);
       const res = items.map((item, index) => (
-        <Col className="imagepicker-item-wrapper" key={`upload${(index || '').toString()}`}>
-          <ImagePicker
-            value={item}
-            sequence={index}
-            disabled={disabled}
-            onChange={this.onChange.bind(this)}
-            onClose={this.onClose.bind(this)}
-            closeable
-            action={action}
-            width={width}
-            mostPic={mostPic}
-            height={height}
-            getToken={getToken}
-            getUrl={getUrl}
-            data={data}
-            type={type}
-            onPreview={onPreview ? (value, name = '') => {
-              onPreview(value, index, name);
-            } : undefined}
-            text={text}
-            headers={headers}
-            fullValue={fullValue}
-            fieldNames={fieldNames}
-            showName={showName}
-            extra={extras[index]}
-          />
-        </Col>
+        <Draggable key={item} draggableId={item} index={index}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.dragHandleProps}
+              {...provided.draggableProps}
+              style={getItemStyle(
+                provided.draggableProps.style,
+                snapshot.isDragging
+              )}
+            >
+              <Col
+                className={`imagepicker-item-wrapper ${
+                  items.length >= mostPic && items.length - 1 === index
+                    ? 'imagepicker-item-wrapper-last'
+                    : ''
+                }`}
+                key={`upload${index.toString()}`}
+              >
+                <ImagePicker
+                  value={item}
+                  sequence={index}
+                  disabled={disabled}
+                  onChange={this.onChange.bind(this)}
+                  onClose={this.onClose.bind(this)}
+                  closeable
+                  action={action}
+                  width={width}
+                  mostPic={mostPic}
+                  height={height}
+                  getToken={getToken}
+                  getUrl={getUrl}
+                  data={data}
+                  type={type}
+                  onPreview={
+                    onPreview
+                      ? (value, name = '') => {
+                          onPreview(value, index, name);
+                        }
+                      : undefined
+                  }
+                  text={text}
+                  headers={headers}
+                  fullValue={fullValue}
+                  fieldNames={fieldNames}
+                  showName={showName}
+                  extra={extras[index]}
+                  beforeUpload={beforeUpload}
+                  adjust={adjust}
+                />
+              </Col>
+            </div>
+          )}
+        </Draggable>
       ));
       // blank placeholder
       if (single) {
         mostPic = 1;
       }
       if (items.length === 0 || (!(items.length > mostPic - 1) && !disabled)) {
-        res.push((
+        res.push(
           <Col
             className="imagepicker-item-wrapper"
-            key={`upload${(items.length || '').toString()}`}
+            key="uploadBlank"
+            style={{ display: this.state.blankShow ? 'block' : 'none' }}
           >
             <ImagePicker
               value={undefined}
@@ -246,18 +313,43 @@ class ImagePickerGroup extends Component {
               fullValue={fullValue}
               fieldNames={fieldNames}
               showName={showName}
+              beforeUpload={beforeUpload}
             />
           </Col>
-        ));
+        );
       }
       return res;
     };
 
     return (
-      <div value={this.state.item} className="imagepicker-container">
-        {createItems()}
-        {this.renderUnit({ position: 'inherit', display: 'flex', alignItems: 'center' })}
-      </div>
+      <DragDropContext
+        onDragEnd={this.onDragEnd.bind(this)}
+        onDragStart={this.onDragStart.bind(this)}
+      >
+        <div value={this.state.item} className="imagepicker-container">
+          <Droppable
+            key="droppable"
+            droppableId="droppable"
+            direction="horizontal"
+          >
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+                {...provided.droppableProps}
+              >
+                {createItems()}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+          {this.renderUnit({
+            position: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+          })}
+        </div>
+      </DragDropContext>
     );
   }
 }

@@ -42,6 +42,9 @@
 
 /* special theme */
 .xg {
+  .ant-btn-link {
+    padding: 0;
+  }
   .ant-form-inline {
     .ant-form-item-label {
       width: auto;
@@ -61,9 +64,19 @@
       user-select: text;
     }
   }
+  .ant-table-row {
+    .ant-form-explain, .ant-form-extra {
+      position: absolute;
+    }
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+    .ant-input-affix-wrapper .ant-input-prefix, .ant-input-affix-wrapper .ant-input-suffix {
+      line-height: 14px;
+    }
+  }
   .ant-form-explain, .ant-form-extra {
     clear: both;
-    height: 19px;
     margin-top: 0;
   }
   .ant-table-small>.ant-table-content>.ant-table-body>table>.ant-table-tbody>tr>td {
@@ -80,6 +93,7 @@
   }
   .ant-table-thead>tr>th{
     text-align : center;
+    padding: 16px 8px;
   }
   .ant-table-thead>tr>th.column-l {
     text-align : left;
@@ -93,6 +107,7 @@
   }
   .ant-calendar-picker, .ant-time-picker {
     width: 100%!important;
+    min-width: initial!important;
   }
   form .ant-input-number {
     margin-right: 0;
@@ -107,6 +122,9 @@
   }
   .ant-table .ant-btn {
     margin: 2px 0 2px 8px;
+  }
+  .ant-table .ant-table-title .ant-btn {
+    margin: 0;
   }
   .ant-text-highlight {
     color: #ff6d29;
@@ -451,7 +469,7 @@
     }
   }
   .ant-layout-sider-zero-width-trigger {
-    z-index: 3;
+    z-index: 13;
     background: rgba(0, 0, 0, 0.5);
     top: 0;
     display: none;
@@ -582,12 +600,35 @@ form .ant-cascader-picker:only-child, form .ant-select:only-child {
   margin: 0;
 }
 
+.ant-btn-primary:focus {
+  border-color: #888888;
+}
+
+.ant-select-selection--multiple .ant-select-search--inline .ant-select-search__field {
+  width: 100px;
+}
+
+.ant-layout-sider-trigger {
+  position: absolute;
+}
+
+.ant-popover-inner-content {
+  max-height: 50vh;
+  overflow: auto;
+}
+.ant-table-fixed-left, .ant-table-fixed-right {
+  z-index: 1;
+}
+
 @media screen and (max-width: 768px) {
   .xg .ant-pagination.ant-table-pagination {
     display: block;
     text-align: right;
   }
   .xg .ant-pagination.ant-table-pagination .ant-pagination-total-text {
+    width: 100%;
+  }
+  .xg [class^=ant-col-] {
     width: 100%;
   }
 }

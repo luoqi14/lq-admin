@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React, { Component } from 'react';
 import { Input } from 'antd';
 import PropTypes from 'prop-types';
@@ -9,11 +10,11 @@ const AntdTextArea = Input.TextArea;
 export default class TextArea extends Component {
   static propTypes = {
     max: PropTypes.number,
-  }
+  };
 
   static defaultProps = {
     max: undefined,
-  }
+  };
   constructor(props) {
     super(props);
     let value = props.value || undefined;
@@ -43,27 +44,32 @@ export default class TextArea extends Component {
   }
 
   render() {
-    const {
-      disabled,
-      max,
-    } = this.props;
-    const {
-      value,
-      cur,
-    } = this.state;
+    const { disabled, max, compRef, ...restProps } = this.props;
+    const { value, cur } = this.state;
     const numVisible = max && !disabled;
     return disabled ? (
-      <div className="textarea-disabled">{isEmpty(value) ? <span className="fe-blank-holder">-</span> : (value)}</div>
+      <div className="textarea-disabled">
+        {isEmpty(value) ? (
+          <span className="fe-blank-holder">-</span>
+        ) : (
+          <div
+            dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, '<br />') }}
+          />
+        )}
+      </div>
     ) : (
       <div style={{ position: 'relative' }}>
         <AntdTextArea
-          {...this.props}
+          {...restProps}
+          ref={compRef}
           value={value}
           onChange={this.handleChange.bind(this)}
         />
-        <div className="ant-textarea-num" style={{ display: !numVisible ? 'none' : 'block' }}>
-          <span className="ant-textarea-num-pre">{cur}</span>
-          /
+        <div
+          className="ant-textarea-num"
+          style={{ display: !numVisible ? 'none' : 'block' }}
+        >
+          <span className="ant-textarea-num-pre">{cur}</span>/
           <span className="ant-textarea-num-post">{max}</span>
         </div>
       </div>

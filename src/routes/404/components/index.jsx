@@ -4,8 +4,7 @@ import { history } from '../../../store/location';
 import './style.scss';
 
 class View extends Component {
-  componentDidMount() {
-  }
+  componentDidMount() {}
   /* eslint-disable */
   render() {
     return (

@@ -1,6 +1,9 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended"
+  ],
   "plugins": [
     "babel",
     "react",
@@ -20,6 +23,13 @@
     "__MOCK__"        : false
   },
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ],
     "key-spacing" : 0,
     "jsx-quotes" : [2, "prefer-double"],
     "max-len" : [2, 120, 2],
@@ -33,13 +43,14 @@
     "no-underscore-dangle": 0,
     "no-unused-expressions": [2, { "allowShortCircuit": true, "allowTernary": true, "allowTaggedTemplates": true }],
     "no-param-reassign": 1,
-    "arrow-parens": [2, "always"],
+    "arrow-parens": "off",
     "react/prefer-stateless-function": 0,
     "import/no-extraneous-dependencies": 0,
     "arrow-body-style": 0,
     "no-restricted-globals": 1,
     "prefer-destructuring": 0,
     "jsx-a11y/anchor-is-valid": 0,
-    "jsx-a11y/click-events-have-key-events": 0
+    "jsx-a11y/click-events-have-key-events": 0,
+    "eqeqeq": 0
   }
 }

@@ -1,0 +1,7 @@
+[defaults]
+url = https://sentry.dailuobo.com/
+org = sentry
+project = mgr
+
+[auth]
+token = ae53326f278f4dbcbb2441aa8285b310377e64d53a3241868af366e1245dbc1d

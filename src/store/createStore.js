@@ -5,14 +5,8 @@ import reducers from './reducers';
 import { updateLocation, history } from './location';
 
 function callAPIMiddleware({ dispatch, getState }) {
-  return (next) => (action) => {
-    const {
-      types,
-      callAPI,
-      shouldCallAPI,
-      payload = {},
-      callback,
-    } = action;
+  return next => action => {
+    const { types, callAPI, shouldCallAPI, payload = {}, callback } = action;
 
     if (!types) {
       // Normal action: pass it on
@@ -22,7 +16,7 @@ function callAPIMiddleware({ dispatch, getState }) {
     if (
       !Array.isArray(types) ||
       types.length !== 3 ||
-      !types.every((type) => typeof type === 'string')
+      !types.every(type => typeof type === 'string')
     ) {
       throw new Error('Expected an array of three string types.');
     }
@@ -30,7 +24,6 @@ function callAPIMiddleware({ dispatch, getState }) {
     if (typeof callAPI !== 'function') {
       throw new Error('Expected callAPI to be a function.');
     }
-
 
     if (typeof shouldCallAPI === 'function' && !shouldCallAPI(getState())) {
       const ret = {};
@@ -40,20 +33,20 @@ function callAPIMiddleware({ dispatch, getState }) {
 
     const [requestType, successType, failureType] = types;
 
-    dispatch(Object.assign({}, payload, {
-      type: requestType,
-    }));
+    dispatch(
+      Object.assign({}, payload, {
+        type: requestType,
+      })
+    );
 
     return callAPI(getState()).then(
-      (response) => {
-        if (response.errorCode === 0) {
-          localStorage.setItem('accessToken', '');
-          history.push('/SignIn');
-        } else if (response.success) {
+      response => {
+        if (response.status) {
           const newPayload = {
             ...payload,
-            data: response.payload,
+            data: response.data,
             type: successType,
+            msg: response.message,
             success: true,
           };
           dispatch(newPayload);
@@ -61,16 +54,17 @@ function callAPIMiddleware({ dispatch, getState }) {
           return newPayload;
         }
         const failurePayload = {
-          msg: response.msg,
+          code: response.code,
+          msg: response.message,
           type: failureType,
           success: false,
         };
-        message.error(response.msg);
+        !payload.disabledMsg && message.error(failurePayload.msg || '系统错误');
         dispatch(failurePayload);
         callback && callback(failurePayload, dispatch, getState());
         return failurePayload;
       },
-      (error) => {
+      error => {
         const errorPayload = {
           msg: error,
           type: failureType,
@@ -98,7 +92,8 @@ export default (initialState = {}) => {
   let composeEnhancers = compose;
 
   if (__LOCAL__) {
-    const composeWithDevToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+    const composeWithDevToolsExtension =
+      window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
     if (typeof composeWithDevToolsExtension === 'function') {
       composeEnhancers = composeWithDevToolsExtension;
     }
@@ -110,10 +105,7 @@ export default (initialState = {}) => {
   const store = createStore(
     reducers(),
     initialState,
-    composeEnhancers(
-      applyMiddleware(...middleware),
-      ...enhancers
-    )
+    composeEnhancers(applyMiddleware(...middleware), ...enhancers)
   );
   store.asyncReducers = {};
 

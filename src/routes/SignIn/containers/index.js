@@ -17,10 +17,9 @@ import View from '../components';
 const mapDispatchToProps = {
   ...actions,
   initCommon: common.initCommon,
-  initCompany: common.initCompany,
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const localState = state[moduleName];
   return {
     ...localState,
@@ -41,4 +40,7 @@ const mapStateToProps = (state) => {
     Selectors are composable. They can be used as input to other selectors.
     https://github.com/reactjs/reselect    */
 
-export default connect(mapStateToProps, mapDispatchToProps)(View);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(View);

@@ -8,11 +8,7 @@ export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = { value: props.value || '' };
-    const {
-      action,
-      fileName = 'file',
-      getUrl,
-    } = props;
+    const { action, fileName = 'file', getUrl } = props;
     this.modules = {
       toolbar: {
         container: this.toolbarOptions,
@@ -29,21 +25,29 @@ export default class Editor extends Component {
             const imgEl = document.createElement('input');
             imgEl.type = 'file';
             imgEl.click();
-            imgEl.addEventListener('change', (e) => {
-              const file = e.target.files[0];
-              fetch(action, { [fileName]: file }, {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              }).then((res) => {
-                const url = getUrl(res);
-                if (url) {
-                  const cursorPosition = this.quill.getSelection().index;
-                  this.quill.insertEmbed(cursorPosition, 'image', url);
-                  this.quill.setSelection(cursorPosition + 1);
-                }
-              });
-            }, false);
+            imgEl.addEventListener(
+              'change',
+              e => {
+                const file = e.target.files[0];
+                fetch(
+                  action,
+                  { [fileName]: file },
+                  {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  }
+                ).then(res => {
+                  const url = getUrl(res);
+                  if (url) {
+                    const cursorPosition = this.quill.getSelection().index;
+                    this.quill.insertEmbed(cursorPosition, 'image', url);
+                    this.quill.setSelection(cursorPosition + 1);
+                  }
+                });
+              },
+              false
+            );
           },
         },
       },

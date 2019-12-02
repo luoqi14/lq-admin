@@ -5,26 +5,21 @@ import InputNumber from '../Number';
 
 export default class NumberRange extends Component {
   static propTypes = {
-    startMin: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    endMin: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    startMax: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    endMax: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    startMin: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    endMin: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    startMax: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    endMax: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     disabled: PropTypes.bool,
     placeholderPrefix: PropTypes.array,
     reduce: PropTypes.number,
-  }
+    precision: PropTypes.number,
+    // 后置标签
+    addonAfter: PropTypes.string,
+    // 中间便签
+    addonMiddle: PropTypes.string,
+    // 前置标签
+    addonBefore: PropTypes.string,
+  };
 
   static defaultProps = {
     startMin: undefined,
@@ -34,13 +29,17 @@ export default class NumberRange extends Component {
     disabled: false,
     placeholderPrefix: [],
     reduce: 1,
-  }
+    precision: 2,
+    addonAfter: undefined,
+    addonMiddle: undefined,
+    addonBefore: undefined,
+  };
 
   constructor(props) {
     super(props);
     const value = props.value || [];
     this.state = {
-      startMin : props.startMin,
+      startMin: props.startMin,
       endMin: props.endMin,
       startMax: props.startMax,
       endMax: props.endMax,
@@ -60,7 +59,8 @@ export default class NumberRange extends Component {
     }
   }
 
-  onStartChange(value) { // value of array type the empty value is [], not [undefined, undefined] and so on.
+  onStartChange(value) {
+    // value of array type the empty value is [], not [undefined, undefined] and so on.
     let values = [];
     if (!this.isEmpty(value) || !this.isEmpty(this.state.value[1])) {
       values = [value, this.state.value[1]];
@@ -76,24 +76,24 @@ export default class NumberRange extends Component {
     this.props.onChange(values);
   }
 
-  isEmpty = (value) => {
+  isEmpty = value => {
     if (value !== 0 && !value) {
       return true;
     }
     return false;
-  }
+  };
 
   render() {
-    const {
-      startMin,
-      endMax = 1000000000000000,
-      value,
-    } = this.state;
+    const { startMin, endMax = 1000000000000000, value } = this.state;
     const {
       disabled,
       placeholder,
       placeholderPrefix,
       reduce,
+      precision,
+      addonAfter,
+      addonBefore,
+      addonMiddle,
     } = this.props;
 
     let ph1 = placeholder;
@@ -106,44 +106,51 @@ export default class NumberRange extends Component {
 
     return (
       <Row span={24} className="number-range-container">
-        {
-          disabled &&
+        {disabled && (
           <div className="fe-blank-holder">
-            <span>{this.isEmpty(value[0]) ? '-' : value[0]}
-            </span> ~ <span>{this.isEmpty(value[1]) ? '-' : value[1]}</span>
+            <span>{this.isEmpty(value[0]) ? '-' : value[0]}</span> ~{' '}
+            <span>{this.isEmpty(value[1]) ? '-' : value[1]}</span>
           </div>
-        }
-        {
-          !disabled &&
-          (
-            <div>
-              <Col span={11}>
-                <InputNumber
-                  min={startMin}
-                  max={endMax}
-                  placeholder={ph1}
-                  value={value[0]}
-                  onChange={this.onStartChange.bind(this)}
-                  reduce={reduce}
-                />
-              </Col>
+        )}
+        {!disabled && (
+          <div>
+            {addonBefore && (
               <Col span={2} style={{ textAlign: 'center' }}>
-                ~
+                {addonBefore}
               </Col>
-              <Col span={11}>
-                <InputNumber
-                  min={startMin}
-                  max={endMax}
-                  placeholder={ph2}
-                  value={value[1]}
-                  onChange={this.onEndChange.bind(this)}
-                  reduce={reduce}
-                />
+            )}
+            <Col span={9}>
+              <InputNumber
+                min={startMin}
+                max={endMax}
+                placeholder={ph1}
+                value={value[0]}
+                onChange={this.onStartChange.bind(this)}
+                reduce={reduce}
+                precision={precision}
+              />
+            </Col>
+            <Col span={2} style={{ textAlign: 'center' }}>
+              {addonMiddle ? `${addonMiddle}` : '~'}
+            </Col>
+            <Col span={9}>
+              <InputNumber
+                min={startMin}
+                max={endMax}
+                placeholder={ph2}
+                value={value[1]}
+                onChange={this.onEndChange.bind(this)}
+                reduce={reduce}
+                precision={precision}
+              />
+            </Col>
+            {addonAfter && (
+              <Col span={2} style={{ textAlign: 'center' }}>
+                {addonAfter}
               </Col>
-            </div>
-          )
-        }
-
+            )}
+          </div>
+        )}
       </Row>
     );
   }

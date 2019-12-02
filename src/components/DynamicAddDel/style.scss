@@ -8,21 +8,23 @@
   .dynamic-item {
     position: relative;
     clear: both;
+    transition: .2s all;
   }
   .dynamic-item [class^=ant-col-]>.ant-form-item:only-child {
     margin-bottom: 24px;
   }
   .dynamic-item [class^=ant-col-]>.ant-form-item.ant-form-item-with-help:only-child {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
   .dynamicadddel-close {
     width: 30px;
     height: 30px;
     cursor: pointer;
     position: absolute;
-    right: -30px;
-    top: -26px;
+    right: 0;
+    top: -16px;
     transition: .1s all;
+    z-index: 100;
   }
   .dynamicadddel-close:hover {
     transform: scale(1.1);
@@ -41,6 +43,7 @@
 }
 
 .dynamic-item:hover {
+  box-shadow: 0 1px 6px rgba(0,0,0,.2);
   .dynamicadddel-crossline {
     opacity: 1;
     transform: rotate(45deg);

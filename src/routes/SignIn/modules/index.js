@@ -1,6 +1,6 @@
-import { message } from 'antd';
-
-const CryptoJS = require('../../../../lib/crypto-js');
+import fetch from '../../../util/fetch';
+import { JSON_CONTENT_TYPE, mapToSendData } from '../../../util';
+import { hex_md5 as hexMd5 } from '../../../../lib/md5';
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -11,69 +11,36 @@ const LOGIN_FAILURE = 'LOGIN_FAILURE';
 // ------------------------------------
 // Actions
 // ------------------------------------
-const loginRequest = (params) => ({
-  type: LOGIN_REQUEST,
-  payload: params,
-});
-
-const loginSuccess = (data) => ({
-  type: LOGIN_SUCCESS,
-  payload: data,
-});
-
-// const loginFailure = (params) => ({
-//   type: LOGIN_FAILURE,
-//   payload: params,
-// });
-
-const key = CryptoJS.enc.Latin1.parse('eGluZ3Vhbmd0YmI=');
-const iv = CryptoJS.enc.Latin1.parse('svtpdprtrsjxabcd');
-
-const login = (params) => (dispatch) => {
-  const newParams = {
-    ...params,
-  };
-  dispatch(loginRequest(newParams));
-  const encrypted = CryptoJS.AES.encrypt(
-    newParams.password,
-    key,
-    {
-      iv, mode:CryptoJS.mode.CBC, padding:CryptoJS.pad.ZeroPadding,
-    }
-  );
-  newParams.password = encrypted.toString();
-
-  return new Promise((resolve) => {
-    dispatch(loginSuccess(newParams));
-    resolve(newParams);
-  });
-};
-
 export const actions = {
-  login,
+  login: params => ({
+    types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
+    callAPI: () =>
+      fetch(
+        `${window.location.origin}/users/login`,
+        mapToSendData({ ...params, password: hexMd5(params.password) }),
+        JSON_CONTENT_TYPE
+      ),
+    payload: params,
+  }),
 };
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [LOGIN_REQUEST]: (state, action) => ({
+  [LOGIN_REQUEST]: state => ({
     ...state,
-    username: action.payload.username,
-    password: action.payload.password,
     loading: true,
   }),
   [LOGIN_SUCCESS]: (state, action) => {
-    localStorage.setItem('accessToken', action.payload.password);
-    localStorage.setItem('user', JSON.stringify(action.payload));
+    localStorage.setItem('accessToken', action.data.token);
+    localStorage.setItem('username', action.phone);
     return {
       ...state,
-      user: action.payload,
       loading: false,
     };
   },
-  [LOGIN_FAILURE]: (state, action) => {
-    message.error(action.payload);
+  [LOGIN_FAILURE]: state => {
     localStorage.setItem('accessToken', '');
     return {
       ...state,

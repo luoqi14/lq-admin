@@ -1,0 +1,48 @@
+.color-picker-container {
+  .color-picker-swatch {
+    padding: 3px;
+    background: #fff;
+    border-radius: 1px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-top: -2px;
+    transition: .2s all;
+    .color-picker-swatch-inner {
+      width: 24px;
+      height: 24px;
+      border-radius: 2px;
+    }
+  }
+  .color-picker-swatch:active {
+    background: #ddd;
+  }
+  .color-picker-popover {
+    position: absolute;
+    z-index: 2;
+  }
+  .color-picker-cover {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  .sketch-picker {
+    .flexbox-fix {
+      line-height: normal;
+      input {
+        box-sizing: content-box;
+      }
+    }
+  }
+}
+
+.has-error {
+  .color-picker-container {
+    .color-picker-swatch {
+      box-shadow: 0 0 0 1px #f5222d;
+    }
+  }
+}

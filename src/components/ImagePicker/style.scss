@@ -12,6 +12,9 @@
     .img-wrapper {
       position: relative;
       color: #bfbfbf;
+      border: 1px dashed #d9d9d9;
+      border-radius: 2px;
+      overflow: hidden;
     }
     .img-watermark {
       background: url(/logo-gray.png);
@@ -19,8 +22,6 @@
     }
   }
   .ant-upload.ant-upload-select {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
     cursor: pointer;
     transition: .3s all;
     .ant-btn {
@@ -45,7 +46,7 @@
 
   .ant-upload .anticon-plus {
     font-size: 100px;
-    color: rgba(0,0,0,.1);
+    color: #ddd;
     width: 100%;
     height: 100%;
   }
@@ -79,8 +80,8 @@
 }
 
 .has-error {
-  .imagepicker-container .ant-upload.ant-upload-select {
-    border: 1px solid #f04134;
+  .avatar-uploader .ant-upload .img-wrapper {
+    border-color: #f04134;
   }
 
   .imagepicker-container .ant-input {
@@ -99,8 +100,10 @@
   display: flex;
   flex-flow: wrap;
   .imagepicker-item-wrapper {
-    margin-bottom: 8px;
-    margin-right: 8px;
+    margin: 4px 8px 4px 0;
+  }
+  .imagepicker-item-wrapper-last {
+    margin-right: 0;
   }
   .fe-field-unit {
     position: relative;

@@ -3,7 +3,7 @@ import commonReducer from './common';
 import dictReducer from './dict';
 import locationReducer from './location';
 
-const makeRootReducer = (asyncReducers) =>
+export const makeRootReducer = asyncReducers =>
   // 合并
   combineReducers({
     common: commonReducer,
@@ -12,7 +12,6 @@ const makeRootReducer = (asyncReducers) =>
     ...asyncReducers,
   });
 
-
 export const injectReducer = (store, { key, reducer }) => {
   const newStore = store;
   // if (Object.hasOwnProperty.call(newStore.asyncReducers, key)) return;
@@ -20,11 +19,17 @@ export const injectReducer = (store, { key, reducer }) => {
   newStore.replaceReducer(makeRootReducer(newStore.asyncReducers));
 };
 
-export function moduleReducer(state, action = {}, initialState, ACTION_HANDLERS) {
-  let resState = state;
-  if (action.type === '@@redux/INIT') {
-    resState = initialState;
-  }
+export function moduleReducer(
+  state,
+  action = {},
+  initialState,
+  ACTION_HANDLERS
+) {
+  const resState = state;
+  // below code will not persist the loaded module state, and all will init
+  // if (action.type === '@@redux/INIT') {
+  //   resState = initialState;
+  // }
   const handler = ACTION_HANDLERS[action.type];
 
   return handler ? handler(resState, action) : resState;

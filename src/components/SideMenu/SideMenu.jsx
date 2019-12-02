@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Menu,
-  Icon,
-  Layout,
-} from 'antd';
+import { Menu, Icon, Layout, Spin } from 'antd';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import './style.scss';
@@ -15,13 +11,9 @@ import respond from '../../decorators/Responsive';
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
-const LinkWrapper = (props) => {
+const LinkWrapper = props => {
   const Com = props.to ? Link : 'a';
-  return (
-    <Com {...props}>
-      {props.children}
-    </Com>
-  );
+  return <Com {...props}>{props.children}</Com>;
 };
 
 class SideMenu extends Component {
@@ -37,21 +29,17 @@ class SideMenu extends Component {
   static defaultProps = {
     selectedKeys: [],
     openKeys: [],
-    collapsed: false,
   };
 
   constructor(props) {
     super(props);
-    props.menuLoad()
-      .then(() => {
-
-      });
+    props.menuLoad().then(() => {});
   }
 
   state = {
     collapsed: false,
   };
-  onCollapse = (collapsed) => {
+  onCollapse = collapsed => {
     this.setState({
       collapsed,
     });
@@ -68,16 +56,38 @@ class SideMenu extends Component {
     this.props.clickSubMenu(key);
   }
 
-  renderMenu(menus) { // recursion to render the sideMenu
-    return menus.map((menu) => {
+  renderSubMenuTitle = menu => {
+    return (
+      <span>
+        {menu.icon && <Icon type={menu.icon} />}
+        <span>
+          <span className="menu-text">{menu.name}</span>
+        </span>
+      </span>
+    );
+  };
+
+  renderMenu(menus) {
+    // recursion to render the sideMenu
+    return menus.map(menu => {
       if (menu.children && menu.children.length > 0) {
         return (
           <SubMenu
             key={menu.id}
+            style={{ display: menu.hidden ? 'none' : 'block' }}
             title={
-              <span>
-                {menu.icon && <Icon type={menu.icon} />}<span><span className="menu-text">{menu.name}</span></span>
-              </span>
+              menu.href ? (
+                <LinkWrapper
+                  to={{
+                    pathname: menu.href,
+                    state: { action: 'RESET' },
+                  }}
+                >
+                  {this.renderSubMenuTitle(menu)}
+                </LinkWrapper>
+              ) : (
+                this.renderSubMenuTitle(menu)
+              )
             }
             onTitleClick={this.onTitleClick.bind(this)}
           >
@@ -86,13 +96,18 @@ class SideMenu extends Component {
         );
       }
       return (
-        <Menu.Item key={menu.id}>
-          <LinkWrapper to={{
-            pathname: menu.href,
-            state: { action: 'RESET' },
-          }}
+        <Menu.Item
+          key={menu.id}
+          style={{ display: menu.hidden ? 'none' : 'block' }}
+        >
+          <LinkWrapper
+            to={{
+              pathname: menu.href,
+              state: { action: 'RESET' },
+            }}
           >
-            {menu.icon && <Icon type={menu.icon} />}<span className="menu-text">{menu.name}</span>
+            {menu.icon && <Icon type={menu.icon} />}
+            <span className="menu-text">{menu.name}</span>
           </LinkWrapper>
         </Menu.Item>
       );
@@ -106,6 +121,7 @@ class SideMenu extends Component {
       openKeys,
       changeOpen,
       expand,
+      loading,
     } = this.props;
 
     return (
@@ -117,15 +133,19 @@ class SideMenu extends Component {
         collapsed={this.state.collapsed}
         onCollapse={this.onCollapse}
       >
+        <Spin size="large" spinning={loading} />
         <div className="flex flex-v" style={{ height: '100%' }}>
           <div className="logo-wrapper flex flex-js flex-c">
-            <div className="logo"><img alt="" src="/logo.png" /></div>
+            <div className="logo">
+              <img alt="" src="/logo.png" />
+            </div>
             <div className="logo-title">后台管理系统</div>
           </div>
           <Menu
             style={{ overflowY: 'auto' }}
             mode="inline"
             theme="dark"
+            inlineIndent={20}
             selectedKeys={[...selectedKeys]}
             openKeys={openKeys}
             onClick={this.onClick.bind(this)}
@@ -139,10 +159,11 @@ class SideMenu extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   selectedKeys: state.common.selectedKeys || [],
   openKeys: state.common.openedKeys || [],
   menuData: getSideMenus(state),
+  loading: state.common.loading,
 });
 
 const mapDispatchToProps = {
@@ -153,4 +174,7 @@ const mapDispatchToProps = {
   changeOpen: common.changeOpen,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(respond(SideMenu));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(respond(SideMenu));

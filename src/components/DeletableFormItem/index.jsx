@@ -21,7 +21,7 @@ export default class DeletableFormItem extends Component {
         <div className="ant-form-title" style={{ lineHeight: 1.5 }}>
           {itemTitle}
         </div>
-        {fields.map((field) => {
+        {fields.map(field => {
           const newField = { ...field };
           //   newField.name = name;
           //   const subName = field.name || field.nameMap;
@@ -46,7 +46,12 @@ export default class DeletableFormItem extends Component {
           </Button>
         )}
         {!disabled && canDelete && closeType === 'icon' && (
-          <div tabIndex={0} role="button" className="dynamicadddel-close" onClick={onDelete}>
+          <div
+            tabIndex={0}
+            role="button"
+            className="dynamicadddel-close"
+            onClick={onDelete}
+          >
             <div className="dynamicadddel-crossline" />
             <div className="dynamicadddel-crossline" />
           </div>
@@ -56,6 +61,12 @@ export default class DeletableFormItem extends Component {
   };
   render() {
     const { disabled } = this.props;
-    return <div className={`dynamicadddel${disabled ? ' dynamicadddel-disabled' : ''}`}>{this.renderFields()}</div>;
+    return (
+      <div
+        className={`dynamicadddel${disabled ? ' dynamicadddel-disabled' : ''}`}
+      >
+        {this.renderFields()}
+      </div>
+    );
   }
 }

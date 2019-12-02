@@ -1,3 +1,4 @@
+import { Form } from 'antd';
 import moment from 'moment';
 import fetch from '../../../../util/fetch';
 import { createAction } from '../../../../util';
@@ -22,8 +23,12 @@ const BASICDETAIL_REFRESH = 'BASICDETAIL_REFRESH';
 // Actions
 // ------------------------------------
 export const actions = {
-  loadUser: (params) => ({
-    types: [BASICDETAIL_USER_REQUEST, BASICDETAIL_USER_SUCCESS, BASICDETAIL_USER_FAILURE],
+  loadUser: params => ({
+    types: [
+      BASICDETAIL_USER_REQUEST,
+      BASICDETAIL_USER_SUCCESS,
+      BASICDETAIL_USER_FAILURE,
+    ],
     callAPI: () => fetch('/users', params),
     payload: params,
   }),
@@ -42,7 +47,7 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [BASICDETAIL_USER_REQUEST] : (state, action) => ({
+  [BASICDETAIL_USER_REQUEST]: (state, action) => ({
     ...state,
     user: {
       ...state.user,
@@ -51,11 +56,7 @@ const ACTION_HANDLERS = {
     },
   }),
   [BASICDETAIL_USER_SUCCESS]: (state, action) => {
-    const {
-      pageNo,
-      pageSize,
-      total,
-    } = action.data;
+    const { pageNo, pageSize, total } = action.data;
     let data = [];
     if (action.pageNo !== 1) {
       data = [...state.user.data, ...action.data.list];
@@ -74,7 +75,7 @@ const ACTION_HANDLERS = {
       },
     };
   },
-  [BASICDETAIL_USER_FAILURE]: (state) => ({
+  [BASICDETAIL_USER_FAILURE]: state => ({
     ...state,
     user: {
       ...state.user,
@@ -89,17 +90,17 @@ const ACTION_HANDLERS = {
     ...state,
     record: action.fields,
   }),
-  [BASICDETAIL_SEARCH]: (state) => ({
+  [BASICDETAIL_SEARCH]: state => ({
     ...state,
   }),
-  [BASICDETAIL_RESET]: (state) => ({
+  [BASICDETAIL_RESET]: state => ({
     ...state,
     searchParams: {},
   }),
-  [BASICDETAIL_CONFIRM]: (state) => ({
+  [BASICDETAIL_CONFIRM]: state => ({
     ...state,
   }),
-  [BASICDETAIL_TOGGLE]: (state) => ({
+  [BASICDETAIL_TOGGLE]: state => ({
     ...state,
     disabled: !state.disabled,
   }),
@@ -112,7 +113,7 @@ const ACTION_HANDLERS = {
     ...state,
     imgs: action.imgs,
   }),
-  [BASICDETAIL_REFRESH]: (state) => ({
+  [BASICDETAIL_REFRESH]: state => ({
     ...state,
     record: {
       ...state.record,
@@ -137,83 +138,94 @@ const initialState = {
   },
   searchParams: {},
   record: {
+    tag1: ['11', '22'], // or { value: [11, 22] }
+    footers: [{ value: '1' }, { value: '2' }], // [1, 2] can means { value: [1, 2] } or [{value: 1}, {value: 2}]
+    teacher: {
+      name: '3',
+    },
+    teachers: [{ name: '4' }],
+    dynamic1: [
+      { name: Form.createFormField({ value: 'name1' }) },
+      { name: Form.createFormField({ value: 'name2' }) },
+    ],
+    title: 'tt',
+    switch1: true,
+    date2: '1970-01-01',
+    select1: {
+      value: '1',
+    },
+    number1: 10000,
+    image1: '/logo.png',
+    file1: '/logo.png',
+    table1: [
+      {
+        id: '1',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '2',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '3',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '4',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '5',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '6',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '7',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '8',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '9',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '10',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '11',
+        col1: 'col1',
+        col2: 'col2',
+      },
+      {
+        id: '12',
+        col1: 'col1',
+        col2: 'col2',
+      },
+    ],
+    map1: [120.21201, 30.2084],
     address1: {
-      value: ['130000', '130200', '130204'],
-    },
-    radio1: {
-      value: 1,
-    },
-    checkbox1: {
-      value: ['1'],
-    },
-    input1: {
-      value: 'GRAB_OVERTIME',
-    },
-    password1: {
-      value: '123456',
-    },
-    number1: {
-      value: 1000,
-    },
-    numberRange1: {
-      value: [0, 1000],
-    },
-    date1: {
-      value: '2017-01-01',
-    },
-    dateRange1: {
-      value: ['2017-01-01', '2017-01-02'],
-    },
-    datetime1: {
-      value: '2017-01-01',
+      value: ['浙江省', '杭州市', '滨江区'],
     },
     datetimeRange1: {
       value: [moment('2017-01-01'), moment('2017-01-02')],
     },
-    month1: {
-      value: '2017-01',
-    },
-    monthRange1: {
-      value: [moment('2017-01'), moment('2017-01')],
-    },
-    file1: {
-      value: '/logo-gray.png',
-    },
-    file2: {
-      value: ['/1.pdf'],
-    },
-    initDistance: {
-      value: '44',
-    },
-    editor1: {
-      value: '3232',
-    },
-    switch1: {
-      value: 1,
-    },
-    propertyPrice: {
-      value: 1,
-    },
-    timeStart: {
-      value: '11:26:58',
-    },
-    timeEnd: {
-      value: '11:26:59',
-    },
-    transfer1: {
-      value: [2],
-    },
-    display1: {
-      value: '不编辑',
-    },
-    tag1: {
-      value: ['Unremovable', 'Tag 2', 'Tag 3'],
-    },
-    footers: ['1', '2'],
-    teacher: {
-      name: 'rose',
-    },
-    teachers: [{ name: 'jack' }],
   },
   disabled: false,
 };

@@ -5,49 +5,57 @@ const mockjs = require('mockjs');
 const router = express.Router();
 
 const users = mockjs.mock({
-  'list|25': [{
-    id: '@id',
-    name: '@cname',
-    phone: /1[3458]\d{9}/,
-    'type|1-2': 1,
-    'storeId|1-2': 1,
-    'status|1-2': 1,
-    createDatetime: '@datetime',
-  }],
+  'list|25': [
+    {
+      id: '@id',
+      name: '@cname',
+      phone: /1[3458]\d{9}/,
+      'type|1-2': 1,
+      'storeId|1-2': 1,
+      'status|1-2': 1,
+      createDatetime: '@datetime',
+    },
+  ],
 });
 
 router.post('/', (req, res) => {
   const params = req.body;
-  const limit = +params.limit || 10;
-  const offset = +params.offset || 0;
+  const pageSize = +params.pageSize || 10;
+  const pageNo = +params.pageNo || 1;
   const column = params.columnKey || 'createDatetime';
   const order = params.order || 'descend';
-  const searchParams = [{
-    name: 'name',
-    fuzzy: true,
-  }, {
-    name: 'phone',
-    fuzzy: true,
-  }, {
-    name: 'type',
-    fuzzy: false,
-  }, {
-    name: 'storeId',
-    fuzzy: false,
-  }, {
-    name: 'status',
-    fuzzy: false,
-  }];
+  const searchParams = [
+    {
+      name: 'name',
+      fuzzy: true,
+    },
+    {
+      name: 'phone',
+      fuzzy: true,
+    },
+    {
+      name: 'type',
+      fuzzy: false,
+    },
+    {
+      name: 'storeId',
+      fuzzy: false,
+    },
+    {
+      name: 'status',
+      fuzzy: false,
+    },
+  ];
   let list = users.list;
-  list = list.filter((item) => {
+  list = list.filter(item => {
     let ret = true;
     for (let i = 0; i < searchParams.length; i += 1) {
       const value = params[searchParams[i].name];
       if (value) {
         if (searchParams[i].fuzzy) {
-          ret = ret && (item[searchParams[i].name].indexOf(value) > -1);
+          ret = ret && item[searchParams[i].name].indexOf(value) > -1;
         } else {
-          ret = ret && (item[searchParams[i].name] == value);
+          ret = ret && item[searchParams[i].name] == value;
         }
       }
     }
@@ -59,15 +67,15 @@ router.post('/', (req, res) => {
     }
     return a[column] < b[column] ? -1 : 1;
   });
-  const ret = list.slice(offset, offset + limit);
+  const ret = list.slice((pageNo - 1) * pageSize, pageNo * pageSize);
   const result = {
-    success: true,
+    status: '1',
     msg: '操作成功',
-    payload: {
-      offset,
-      limit,
+    data: {
+      pageNo,
+      pageSize,
       total: list.length,
-      list: ret,
+      rows: ret,
     },
   };
 
@@ -78,12 +86,26 @@ router.post('/lock', (req, res) => {
   const params = req.body;
   const ids = params.ids;
   const list = users.list;
-  const ret = list.filter((item) => ids.indexOf(item.id) > -1);
-  ret.forEach((item) => { item.status = 2; });
+  const ret = list.filter(item => ids.indexOf(item.id) > -1);
+  ret.forEach(item => {
+    item.status = 2;
+  });
   const result = {
-    success: true,
+    status: '1',
     msg: '操作成功',
-    payload: ret,
+    data: ret,
+  };
+
+  res.json(result);
+});
+
+router.post('/login', (req, res) => {
+  const result = {
+    status: '1',
+    msg: '操作成功',
+    data: {
+      token: '1',
+    },
   };
 
   res.json(result);

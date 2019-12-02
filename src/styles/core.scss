@@ -1,5 +1,18 @@
 @import 'base';
-
+::-webkit-scrollbar{
+  width:6px;
+  height: 6px;
+  overflow:hidden;
+}
+::-webkit-scrollbar-button{ 
+  display:none;
+}
+::-webkit-scrollbar-thumb{ 
+  background-color: $primary-4;
+}
+::-webkit-scrollbar-thumb:hover{ 
+  background-color: $primary-color;
+}
 // Some best-practice CSS that's useful for most apps
 // Just remove them if they're not what you want
 html {
@@ -65,6 +78,12 @@ table tr td{
 };
 
 .xg {
+  .ant-popover-content {
+    max-width: 250px;
+  }
+  .ant-message-notice {
+    word-break: break-all;
+  }
   .fe-blank-holder {
     margin-left: 0;
   }
@@ -76,7 +95,7 @@ table tr td{
   }
   .ant-layout-header {
     background: #fff;
-    z-index: 2;
+    z-index: 11;
     box-shadow: 1px 2px 1px rgba(0,0,0,.072);
     .ant-menu-item {
       font-size: 14px;
@@ -87,9 +106,14 @@ table tr td{
   }
   .ant-layout-sider {
     width: 200px;
+    height: 100vh;
+    background: #002f5a;
   }
   .ant-menu-inline .ant-menu-submenu-title {
     font-size: 14px;
+  }
+  .ant-menu-submenu-title a {
+    color: #fff;
   }
   .ant-menu-dark.ant-menu-horizontal {
     border: none;
@@ -99,9 +123,6 @@ table tr td{
   }
   .ant-table-scroll {
     overflow-x: auto;
-  }
-  .ant-table-body {
-    overflow-x: visible!important;
   }
 }
 
@@ -116,7 +137,7 @@ table tr td{
       width: 100%;
     }
 
-    [class^=ant-col-] {
+    [class*=ant-col-] {
       width: 100%;
     }
 
@@ -151,6 +172,16 @@ table tr td{
       display: none;
     }
   }
+}
+
+@keyframes table-row-highlight {
+  50% {
+    background: $primary-color;
+  }
+}
+
+.table-row-highlight {
+  animation: table-row-highlight 2s ease-in-out;
 }
 
 @media (max-width: 575px) {

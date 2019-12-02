@@ -12,7 +12,11 @@ class Display extends Component {
       html = render(value);
       html = isEmpty(html) ? <span className="fe-blank-holder">-</span> : html;
     } else {
-      html = <span>{isEmpty(value) ? <span className="fe-blank-holder">-</span> : value}</span>;
+      html = (
+        <span>
+          {isEmpty(value) ? <span className="fe-blank-holder">-</span> : value}
+        </span>
+      );
     }
     if (href && !isEmpty(value)) {
       html = <Link to={href}>{html}</Link>;
@@ -21,15 +25,11 @@ class Display extends Component {
   };
 
   render() {
-    const {
-      className = '',
-    } = this.props;
+    const { className = '' } = this.props;
 
     return (
       <div className={`${className} display-container`}>
-        {
-          this.renderValue()
-        }
+        {this.renderValue()}
         {this.renderUnit()}
       </div>
     );

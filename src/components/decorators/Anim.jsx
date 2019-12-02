@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 
-const fadeIn = (Cmp) => {
+const fadeIn = Cmp => {
   class AnimDecorator extends Component {
     constructor(props) {
       super(props);
@@ -15,10 +15,7 @@ const fadeIn = (Cmp) => {
     }
 
     render() {
-      return (<Cmp
-        {...this.props}
-        ref={this.container}
-      />);
+      return <Cmp {...this.props} ref={this.container} />;
     }
   }
   return AnimDecorator;

@@ -8,7 +8,7 @@ export default function AsyncComponent(importComponent) {
 
     componentDidMount() {
       this.mounted = true;
-      importComponent().then((res) => {
+      importComponent().then(res => {
         if (this.mounted) {
           this.setState({
             component: res.default,
@@ -24,9 +24,13 @@ export default function AsyncComponent(importComponent) {
     render() {
       const C = this.state.component;
 
-      return C
-        ? <C {...this.props} className="page-fade-in" />
-        : <div style={{ padding: 8 }}><Skeleton active /></div>;
+      return C ? (
+        <C {...this.props} className="page-fade-in" />
+      ) : (
+        <div style={{ padding: 8, width: '100%' }}>
+          <Skeleton active />
+        </div>
+      );
     }
   }
 

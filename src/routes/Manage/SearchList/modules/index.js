@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import fetch from '../../../../util/fetch';
 import { createAction, mapToSendData, mapToAntdFields } from '../../../../util';
 import { moduleReducer } from '../../../../store/reducers';
@@ -17,15 +18,20 @@ const SEARCHLIST_ROW_CLEAR = 'SEARCHLIST_ROW_CLEAR';
 // Actions
 // ------------------------------------
 export const actions = {
-  loadUsers: (params) => ({
+  loadUsers: params => ({
     types: [SEARCHLIST_REQUEST, SEARCHLIST_SUCCESS, SEARCHLIST_FAILURE],
-    callAPI: () => fetch('/users', mapToSendData(params)),
+    callAPI: () =>
+      fetch(`${window.location.origin}/users`, mapToSendData(params)),
     payload: params,
   }),
   changeSearch: createAction('SEARCHLIST_SEARCH_CHANGE', 'fields'),
-  lockUser: (params) => ({
-    types: [SEARCHLIST_LOCK_REQUEST, SEARCHLIST_LOCK_SUCCESS, SEARCHLIST_LOCK_FAILURE],
-    callAPI: () => fetch('/users/lock', params),
+  lockUser: params => ({
+    types: [
+      SEARCHLIST_LOCK_REQUEST,
+      SEARCHLIST_LOCK_SUCCESS,
+      SEARCHLIST_LOCK_FAILURE,
+    ],
+    callAPI: () => fetch(`${window.location.origin}/users/lock`, params),
     payload: params,
   }),
   selectRows: createAction('SEARCHLIST_ROW_SELECT', 'changedRows', 'selected'),
@@ -36,17 +42,17 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [SEARCHLIST_REQUEST] : (state) => ({
+  [SEARCHLIST_REQUEST]: state => ({
     ...state,
     loading: true,
   }),
   [SEARCHLIST_SUCCESS]: (state, action) => ({
     ...state,
-    users: action.data.list,
+    users: action.data.rows,
     loading: false,
     page: {
-      offset: action.data.offset,
-      limit: action.data.limit,
+      pageNo: action.data.pageNo,
+      pageSize: action.data.pageSize,
       total: action.data.total,
     },
     sorter: {
@@ -54,7 +60,7 @@ const ACTION_HANDLERS = {
       order: action.order,
     },
   }),
-  [SEARCHLIST_FAILURE]: (state) => ({
+  [SEARCHLIST_FAILURE]: state => ({
     ...state,
     loading: false,
   }),
@@ -62,15 +68,16 @@ const ACTION_HANDLERS = {
     ...state,
     searchParams: action.fields,
   }),
-  [SEARCHLIST_LOCK_REQUEST] : (state) => ({
+  [SEARCHLIST_LOCK_REQUEST]: state => ({
     ...state,
     loading: true,
   }),
   [SEARCHLIST_LOCK_SUCCESS]: (state, action) => {
+    message.success('操作成功');
     const { users } = state;
     const lockedUsers = action.data;
-    lockedUsers.forEach((user) => {
-      const index = users.findIndex((item) => item.id === user.id);
+    lockedUsers.forEach(user => {
+      const index = users.findIndex(item => item.id === user.id);
       users[index] = user;
     });
     return {
@@ -80,15 +87,18 @@ const ACTION_HANDLERS = {
       selectedRowKeys: action.multi ? [] : state.selectedRowKeys,
     };
   },
-  [SEARCHLIST_LOCK_FAILURE]: (state) => ({
+  [SEARCHLIST_LOCK_FAILURE]: state => ({
     ...state,
     loading: false,
   }),
   [SEARCHLIST_ROW_SELECT]: (state, action) => {
     let selectedRowKeys = [];
     if (action.selected) {
-      selectedRowKeys =
-        Array.from(new Set(state.selectedRowKeys.concat(action.changedRows.map((item) => (item.id)))));
+      selectedRowKeys = Array.from(
+        new Set(
+          state.selectedRowKeys.concat(action.changedRows.map(item => item.id))
+        )
+      );
     } else {
       selectedRowKeys = [];
     }
@@ -97,7 +107,7 @@ const ACTION_HANDLERS = {
       selectedRowKeys,
     };
   },
-  [SEARCHLIST_ROW_CLEAR] : (state) => ({
+  [SEARCHLIST_ROW_CLEAR]: state => ({
     ...state,
     selectedRowKeys: [],
   }),
@@ -114,8 +124,8 @@ const initialState = {
     order: 'descend',
   },
   page: {
-    offset: 0,
-    limit: 10,
+    pageSize: 10,
+    pageNo: 1,
   },
   selectedRowKeys: [],
   columns: [
@@ -178,13 +188,17 @@ const initialState = {
       render: 'func:renderAction',
     },
   ],
-  buttons: [{
-    label: '批量注销',
-    onClick: 'func:btnClick',
-    disabled: 'func:btnDisable:run',
-  }],
+  buttons: [
+    {
+      label: '批量注销',
+      onClick: 'func:btnClick',
+      disabled: 'func:btnDisable:run',
+    },
+  ],
 };
-initialState.searchParams = mapToAntdFields(initialState.columns.filter((col) => col.search));
+initialState.searchParams = mapToAntdFields(
+  initialState.columns.filter(col => col.search)
+);
 
 export default function reducer(state = initialState, action = {}) {
   return moduleReducer(state, action, initialState, ACTION_HANDLERS);

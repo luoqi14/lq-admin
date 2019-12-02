@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Input as AntdInput, Icon } from 'antd';
+import { Input as AntdInput, Icon, AutoComplete } from 'antd';
 import { Link } from 'react-router-dom';
 import './style.scss';
 import { isEmpty } from '../utils';
+import { shallowEqual } from '../../util';
 import unit from '../decorators/unit';
 
 class Input extends Component {
@@ -26,6 +27,21 @@ class Input extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, newState) {
+    return (
+      !shallowEqual(this.props, nextProps, ['data-__field', 'data-__meta']) ||
+      !shallowEqual(this.state, newState)
+    );
+  }
+
+  // handleChange(value) {
+  //   this.props.onChange(value || undefined);
+  // }
+  //
+  // emitEmpty = () => {
+  //   this.handleChange(undefined);
+  // };
+
   handleChange(value) {
     this.props.onChange(value);
   }
@@ -41,7 +57,11 @@ class Input extends Component {
       html = render(value);
       html = isEmpty(html) ? <span className="fe-blank-holder">-</span> : html;
     } else {
-      html = <span>{isEmpty(value) ? <span className="fe-blank-holder">-</span> : value}</span>;
+      html = (
+        <span>
+          {isEmpty(value) ? <span className="fe-blank-holder">-</span> : value}
+        </span>
+      );
     }
     if (href && !isEmpty(value)) {
       html = <Link to={href}>{html}</Link>;
@@ -55,7 +75,6 @@ class Input extends Component {
       addonAfter = '',
       inputWidth,
       allowClear,
-      value = '',
       placeholder,
       disabled,
       readonly,
@@ -65,9 +84,16 @@ class Input extends Component {
       icon,
       size,
       autoFocus,
+      compRef,
+      onBlur,
+      onPressEnter,
+      data,
     } = this.props;
 
-    const suffix = allowClear && value !== '' ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
+    // const suffix =
+    //   allowClear && value != '' ? (
+    //     <Icon type="close-circle" onClick={this.emitEmpty} />
+    //   ) : null;
     const style = {};
     let wrapperClass = '';
 
@@ -87,31 +113,46 @@ class Input extends Component {
       wrapperClass = ' flex flex-c flex-fs';
     }
 
+    const Inner = data ? AutoComplete : AntdInput;
+    const extraProps = {};
+    if (data) {
+      extraProps.dataSource = data.map(d => d.label); // TODO
+    }
+
     return (
       <div className={`input-container${wrapperClass}`}>
         <span>{addonBefore}</span>
-        {
-          disabled ? this.renderDisabled() : (
-            <AntdInput
-              id={id}
-              size={size}
-              autoFocus={autoFocus}
-              autoComplete="off"
-              disabled={readonly}
-              placeholder={placeholder}
-              style={style}
-              prefix={icon ? <Icon type={icon} style={{ color: 'rgba(0,0,0,.25)' }} /> : null}
-              suffix={readonly ? null : suffix}
-              title={this.state.value}
-              value={this.state.value}
-              onChange={(e) => {
-                this.handleChange(e.target.value);
-              }}
-              addonAfter={antdAddonAfter}
-              addonBefore={antdAddonBefore}
-            />
-          )
-        }
+        {disabled ? (
+          this.renderDisabled()
+        ) : (
+          <Inner
+            {...extraProps}
+            allowClear={allowClear}
+            ref={compRef}
+            id={id}
+            size={size}
+            autoFocus={autoFocus}
+            autoComplete="off"
+            disabled={readonly}
+            placeholder={placeholder}
+            style={style}
+            prefix={
+              icon ? (
+                <Icon type={icon} style={{ color: 'rgba(0,0,0,.25)' }} />
+              ) : null
+            }
+            // suffix={readonly ? null : suffix}
+            title={this.state.value}
+            value={this.state.value}
+            onChange={e => {
+              this.handleChange(data ? e : e.target.value);
+            }}
+            addonAfter={antdAddonAfter}
+            addonBefore={antdAddonBefore}
+            onBlur={onBlur}
+            onPressEnter={onPressEnter}
+          />
+        )}
         <span>{addonAfter}</span>
         {this.renderUnit()}
       </div>

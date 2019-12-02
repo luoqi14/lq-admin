@@ -1,3 +1,4 @@
+@import '../colors';
 .table-column-right {
   text-align: right;
 }
@@ -16,11 +17,13 @@
   overflow-x: auto!important;
 }
 
-.ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
-  box-shadow: 6px 0 6px -4px rgba(0,0,0,.15);
-}
-
 .fe-table .ant-table-tbody {
+  // form表格内的icon不增加margin
+  .ant-form-item-control {
+    .anticon {
+      margin: 0!important;
+    }
+  }
   .anticon {
     margin: 10px 4px;
   }
@@ -30,9 +33,60 @@
   .anticon-stop {
     color: red;
   }
+  .anticon-profile {
+    color: #2587e4;
+  }
+  .anticon-delete {
+    color: red;
+  }
+  .anticon-to-top {
+    color: $primary-color;
+  }
+  .anticon-undo {
+    color: $primary-1;
+  }
+  .anticon-search {
+    color: #67c23a;
+  }
 }
 
 .xg .fe-table .ant-upload.ant-upload-select {
   overflow: initial;
   cursor: pointer;
+}
+
+.fe-table-container:hover .indicator-maximize-container {
+  opacity: 1;
+  transition: .3s;
+}
+
+.fe-table-container .indicator-maximize-container {
+  opacity: 0;
+  transition: .3s;
+}
+
+.table-export-icon {
+  position: absolute;
+  z-index: 11;
+  right: 24px;
+  top: 0;
+  opacity: 0;
+  transition: .3s;
+  color: rgba(0,0,0,.45);
+}
+
+.fe-table-container:hover .table-export-icon {
+  opacity: 1;
+}
+
+.fe-table {
+  .action-column {
+    a + a {
+      border-left: 1px solid #ddd;
+    }
+    a {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
 }

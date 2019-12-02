@@ -1,0 +1,17 @@
+.fe-table-action {
+  .table-action-item + .table-action-item {
+    border-left: 1px solid #ddd;
+  }
+  .table-action-item {
+    padding-left: 8px;
+    padding-right: 8px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
+
+.ant-dropdown-menu-item {
+  .table-action-item {
+    color: $primary-color;
+  }
+}

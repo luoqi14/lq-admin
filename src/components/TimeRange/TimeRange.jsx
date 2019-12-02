@@ -7,7 +7,11 @@ export default class TimeRange extends Component {
   constructor(props) {
     super(props);
     setTimeout(() => {
-      this.props.onChange([props.form.getFieldValue(props.names[0]), props.form.getFieldValue(props.names[1])]);
+      props.form &&
+        props.onChange([
+          props.form.getFieldValue(props.names[0]),
+          props.form.getFieldValue(props.names[1]),
+        ]);
     }, 0);
     this.hours = [];
     this.minutes = [];
@@ -31,7 +35,7 @@ export default class TimeRange extends Component {
     }, 0);
   }
 
-  getDefaultValue = (value) => {
+  getDefaultValue = value => {
     const res = [moment(), moment()];
     if (value[0]) {
       res[1] = moment(value[0], 'HH:mm:ss');
@@ -42,7 +46,7 @@ export default class TimeRange extends Component {
     return res;
   };
 
-  disable = (value) => {
+  disable = value => {
     let startHour = 0;
     let startMinute = 0;
     let startSecond = 0;
@@ -81,65 +85,74 @@ export default class TimeRange extends Component {
 
   render() {
     const {
-      disabled, names, form, placeholder, value = [], 
+      disabled,
+      names,
+      form,
+      placeholder,
+      value = [],
+      required,
+      hidden,
+      format,
     } = this.props;
     const disableValues = this.disable(value || []);
     const defaultValues = this.getDefaultValue(value || []);
-    return (
-      disabled ? (
-        <div>
-          <span>{value[0] ? value[0] : '-'}
-          </span> ~ <span>{value[1] ? value[1] : '-'}</span>
-        </div>
-      ) : (
-        <Row span={24} className="time-range-container">
-          {
-            (
-              <div>
-                <Col span={11}>
-                  {createFormItem({
-                    field: {
-                      name: names[0],
-                      type: 'time',
-                      wrapperSpan: 24,
-                      requiredMsg: placeholder[0],
-                      defaultOpenValue: defaultValues[0],
-                      onChange: (v) => { this.onStartChange(v); },
-                      disabledHours: () => disableValues.start[0],
-                      disabledMinutes: () => disableValues.start[1],
-                      disabledSeconds: () => disableValues.start[2],
-                      disabled,
-                    },
-                    form,
-                  })}
-                </Col>
-                <Col span={2} style={{ textAlign: 'center' }}>
-                  <span> ~ </span>
-                </Col>
-                <Col span={11}>
-                  {createFormItem({
-                    field: {
-                      name: names[1],
-                      type: 'time',
-                      wrapperSpan: 24,
-                      requiredMsg: placeholder[1],
-                      defaultOpenValue: defaultValues[1],
-                      onChange: (v) => { this.onEndChange(v); },
-                      disabledHours: () => disableValues.end[0],
-                      disabledMinutes: () => disableValues.end[1],
-                      disabledSeconds: () => disableValues.end[2],
-                      disabled,
-                    },
-                    form,
-                  })}
-                </Col>
-              </div>
-            )
-          }
-
-        </Row>
-      )
-
+    return disabled ? (
+      <div>
+        <span>{value[0] ? value[0] : '-'}</span> ~{' '}
+        <span>{value[1] ? value[1] : '-'}</span>
+      </div>
+    ) : (
+      <Row span={24} className="time-range-container">
+        {
+          <div>
+            <Col span={11}>
+              {createFormItem({
+                field: {
+                  name: names[0],
+                  type: 'time',
+                  wrapperSpan: 24,
+                  requiredMsg: placeholder[0],
+                  defaultOpenValue: defaultValues[0],
+                  onChange: v => {
+                    this.onStartChange(v);
+                  },
+                  disabledHours: () => disableValues.start[0],
+                  disabledMinutes: () => disableValues.start[1],
+                  disabledSeconds: () => disableValues.start[2],
+                  disabled,
+                  required: hidden ? false : required,
+                  format,
+                },
+                form,
+              })}
+            </Col>
+            <Col span={2} style={{ textAlign: 'center' }}>
+              <span> ~ </span>
+            </Col>
+            <Col span={11}>
+              {createFormItem({
+                field: {
+                  name: names[1],
+                  type: 'time',
+                  wrapperSpan: 24,
+                  requiredMsg: placeholder[1],
+                  defaultOpenValue: defaultValues[1],
+                  onChange: v => {
+                    this.onEndChange(v);
+                  },
+                  disabledHours: () => disableValues.end[0],
+                  disabledMinutes: () => disableValues.end[1],
+                  disabledSeconds: () => disableValues.end[2],
+                  disabled,
+                  required: hidden ? false : required,
+                  format,
+                },
+                form,
+              })}
+            </Col>
+          </div>
+        }
+      </Row>
     );
   }
 }

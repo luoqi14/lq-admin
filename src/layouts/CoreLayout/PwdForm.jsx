@@ -19,12 +19,12 @@ class PwdForm extends Component {
   save() {
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.props.savePwd(values).then((isSuccess) => {
-          if (isSuccess) {
+        this.props.savePwd(values).then(res => {
+          if (res.success) {
             this.props.form.resetFields();
-            const user = JSON.parse(localStorage.getItem('user'));
-            user.firstLogin = false;
-            localStorage.setItem('user', JSON.stringify(user));
+            // const user = JSON.parse(localStorage.getItem('user'));
+            // user.firstLogin = false;
+            // localStorage.setItem('user', JSON.stringify(user));
           }
         });
       }
@@ -32,64 +32,82 @@ class PwdForm extends Component {
   }
 
   render() {
-    const {
-      form,
-      savePwdLoading,
-    } = this.props;
+    const { form, savePwdLoading } = this.props;
 
     const user = JSON.parse(localStorage.getItem('user'));
     const firstLogin = user && user.firstLogin;
 
-    const fields = [{
-      type: 'title',
-      label: <span><Icon type="exclamation-circle-o" />为了你的账号安全，请修改密码</span>,
-      className: 'warning',
-      hidden: !firstLogin,
-    }, {
-      label: '原密码',
-      name: 'oldPassword',
-      type: 'password',
-      required: true,
-      min: 5,
-      max: 20,
-    }, {
-      label: '新密码',
-      name: 'newPassword',
-      type: 'password',
-      required: true,
-      min: 6,
-      max: 20,
-      pattern: /^[0-9a-zA-Z]*$/,
-      patternMsg: '密码只能是数字或英文大小写',
-      validator: (rule, value, callback) => {
-        if (value && form.getFieldValue('pwdConfirm')) {
-          form.validateFields(['pwdConfirm'], { force: true });
-        }
-        callback();
+    const fields = [
+      {
+        type: 'title',
+        label: (
+          <span>
+            <Icon type="exclamation-circle-o" />
+            为了你的账号安全，请修改密码
+          </span>
+        ),
+        className: 'warning',
+        hidden: !firstLogin,
       },
-    }, {
-      label: '新密码确认',
-      name: 'pwdConfirm',
-      type: 'password',
-      required: true,
-      min: 6,
-      max: 20,
-      validator: (rule, value, cbk) => {
-        if (value && value !== form.getFieldValue('newPassword')) {
-          cbk('两次密码输入不一致');
-        } else {
-          cbk();
-        }
+      {
+        label: '原密码',
+        name: 'oldPwd',
+        type: 'password',
+        required: true,
+        min: 5,
+        max: 20,
       },
-    }];
+      {
+        label: '新密码',
+        name: 'newPwd',
+        type: 'password',
+        required: true,
+        min: 5,
+        max: 20,
+        pattern: /^[0-9a-zA-Z]*$/,
+        patternMsg: '密码只能是数字或英文大小写',
+        validator: (rule, value, callback) => {
+          if (value && form.getFieldValue('pwdConfirm')) {
+            form.validateFields(['pwdConfirm'], { force: true });
+          }
+          callback();
+        },
+      },
+      {
+        label: '新密码确认',
+        name: 'pwdConfirm',
+        type: 'password',
+        required: true,
+        min: 5,
+        max: 20,
+        validator: (rule, value, cbk) => {
+          if (value && value !== form.getFieldValue('newPwd')) {
+            cbk('两次密码输入不一致');
+          } else {
+            cbk();
+          }
+        },
+      },
+    ];
 
     const footer = [
-      <Button size="large" key="submit" type="primary" onClick={this.save.bind(this)} loading={savePwdLoading}>
+      <Button
+        size="large"
+        key="submit"
+        type="primary"
+        onClick={this.save.bind(this)}
+        loading={savePwdLoading}
+      >
         保存
       </Button>,
     ];
 
-    !firstLogin && footer.push(<Button size="large" key="back" onClick={this.onCancel.bind(this)}>取消</Button>);
+    !firstLogin &&
+      footer.push(
+        <Button size="large" key="back" onClick={this.onCancel.bind(this)}>
+          取消
+        </Button>
+      );
 
     return (
       <Modal
@@ -104,22 +122,20 @@ class PwdForm extends Component {
       >
         <Form layout="horizontal">
           <Row>
-            {
-              fields.map((item) => (
-                createFormItem({
-                  field: item,
-                  form,
-                  formItemLayout: {
-                    labelCol: {
-                      span: 6,
-                    },
-                    wrapperCol: {
-                      span: 16,
-                    },
+            {fields.map(item =>
+              createFormItem({
+                field: item,
+                form,
+                formItemLayout: {
+                  labelCol: {
+                    span: 6,
                   },
-                })
-              ))
-            }
+                  wrapperCol: {
+                    span: 16,
+                  },
+                },
+              })
+            )}
           </Row>
         </Form>
       </Modal>
@@ -127,7 +143,7 @@ class PwdForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   editPwdVisible: state.common.editPwdVisible,
   savePwdLoading: state.common.savePwdLoading,
 });
@@ -139,4 +155,9 @@ const mapDispatchToProps = {
   initCommon: common.initCommon,
 };
 
-export default Form.create()(connect(mapStateToProps, mapDispatchToProps)(PwdForm));
+export default Form.create()(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(PwdForm)
+);

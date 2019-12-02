@@ -23,6 +23,9 @@
   .ant-form-item.btn-container {
     margin-bottom: 16px;
   }
+  .ant-form-item-with-help {
+    margin-bottom: 24px;
+  }
 }
 
 /* use css to set position of modal */
@@ -40,4 +43,13 @@
 .ant-advanced-search-form .indicator-container {
   opacity: 0;
   transition: .3s;
+}
+
+.searchform-arrow svg {
+  font-size: 10px;
+  transition: .2s all;
+}
+
+.searchform-arrow-down svg {
+  transform: rotate(180deg);
 }

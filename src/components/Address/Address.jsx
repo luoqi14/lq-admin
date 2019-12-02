@@ -13,7 +13,9 @@ export default class Address extends Component {
     data: PropTypes.array,
     fieldNames: PropTypes.object,
     loadData: PropTypes.func,
-  }
+    showSearch: PropTypes.bool,
+    appendToBody: PropTypes.bool,
+  };
 
   static defaultProps = {
     disabled: false,
@@ -21,15 +23,26 @@ export default class Address extends Component {
     data: undefined,
     fieldNames: undefined,
     loadData: () => {},
-  }
+    showSearch: true,
+    appendToBody: false,
+  };
 
-  handleChange(value) {
-    this.props.onChange(value);
+  handleChange(value, opts) {
+    this.props.onChange(value, opts);
   }
 
   render() {
     const {
-      displayValue, disabled, placeholder, changeOnSelect, data, value, fieldNames, loadData, 
+      displayValue,
+      disabled,
+      placeholder,
+      changeOnSelect,
+      data,
+      value,
+      fieldNames,
+      loadData,
+      showSearch,
+      appendToBody,
     } = this.props;
     return (
       <Cascader
@@ -41,7 +54,10 @@ export default class Address extends Component {
         value={value}
         options={data || CityUtil.treeCity(displayValue ? '' : 'id')}
         onChange={this.handleChange.bind(this)}
-        getPopupContainer={(node) => node.parentNode}
+        getPopupContainer={node =>
+          appendToBody ? document.body : node.parentNode
+        }
+        showSearch={showSearch}
       />
     );
   }

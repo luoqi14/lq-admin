@@ -9,18 +9,22 @@ export default class Switch extends Component {
       disabled,
       checkedChildren,
       unCheckedChildren,
+      addonAfter = '',
     } = this.props;
 
     return (
-      <AntdSwitch
-        disabled={disabled}
-        checked={!!+value}
-        checkedChildren={checkedChildren}
-        unCheckedChildren={unCheckedChildren}
-        onChange={(val) => {
-          this.props.onChange(Number(val));
-        }}
-      />
+      <div>
+        <AntdSwitch
+          disabled={disabled}
+          checked={!!+value}
+          checkedChildren={checkedChildren}
+          unCheckedChildren={unCheckedChildren}
+          onChange={val => {
+            this.props.onChange(Number(val));
+          }}
+        />
+        {addonAfter}
+      </div>
     );
   }
 }

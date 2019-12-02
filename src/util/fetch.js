@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define,consistent-return,no-param-reassign */
+/* eslint-disable no-use-before-define,consistent-return,no-param-reassign,no-debugger */
 import 'whatwg-fetch';
 
 const oldFetch = fetch;
@@ -12,9 +12,12 @@ const judgeTokenInvalid = ({ invalidCode, responseCode }) => {
   } else if (typeof invalidCode === 'function') {
     // 若 invalidCode 为方法
     return invalidCode(responseCode);
-  } else if (typeof invalidCode === 'object' && invalidCode.constructor === Array) {
+  } else if (
+    typeof invalidCode === 'object' &&
+    invalidCode.constructor === Array
+  ) {
     // 若 invalidCode 为数组
-    return invalidCode.findIndex((code) => (code === responseCode)) > -1;
+    return invalidCode.findIndex(code => code === responseCode) > -1;
   }
   return false;
 };
@@ -30,7 +33,10 @@ const newFetch = (url, params = {}, opts = {}) => {
     resProps,
     refreshToken,
   } = config;
-  const shouldBaseUrl = url.indexOf('//') === -1 && url.indexOf('http://') === -1 && url.indexOf('https://') === -1;
+  const shouldBaseUrl =
+    url.indexOf('//') === -1 &&
+    url.indexOf('http://') === -1 &&
+    url.indexOf('https://') === -1;
 
   const createOpts = (data, token) => {
     const defaultOpts = {
@@ -53,7 +59,7 @@ const newFetch = (url, params = {}, opts = {}) => {
       ...opts,
       headers: {
         ...defaultOpts.headers,
-        ...opts.headers || {},
+        ...(opts.headers || {}),
       },
     };
 
@@ -61,19 +67,23 @@ const newFetch = (url, params = {}, opts = {}) => {
       newOpts.headers['Content-Type'] = 'application/json';
     }
 
-    if (newOpts.method === 'POST') {
-      if (newOpts.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    if (newOpts.method === 'POST' && !newOpts.urlParam) {
+      if (
+        newOpts.headers['Content-Type'] === 'application/x-www-form-urlencoded'
+      ) {
         let dataStr = '';
         const keys = Object.keys(data);
         keys.forEach((key, index) => {
           const a = index === 0 ? '' : '&';
-          dataStr += `${a}${key}=${typeof data[key] !== 'undefined' ? data[key] : ''}`;
+          dataStr += `${a}${key}=${
+            typeof data[key] !== 'undefined' ? data[key] : ''
+          }`;
         });
         newOpts.body = dataStr;
       } else if (newOpts.headers['Content-Type'] === 'multipart/form-data') {
         const formData = new FormData();
         const keys = Object.keys(data);
-        keys.forEach((key) => {
+        keys.forEach(key => {
           formData.append(key, data[key]);
         });
         newOpts.body = formData;
@@ -86,14 +96,16 @@ const newFetch = (url, params = {}, opts = {}) => {
           return v;
         });
       }
-    } else if (newOpts.method.toUpperCase() === 'GET') {
+    } else if (newOpts.method.toUpperCase() === 'GET' || newOpts.urlParam) {
       let dataStr = '';
       const getKeys = Object.keys(data);
       getKeys.forEach((key, index) => {
         const a = index === 0 ? '' : '&';
         dataStr += `${a}${key}=${data[key]}`;
       });
-      url = `${url}${url.indexOf('?') > -1 ? '&' : '?'}${dataStr}`;
+      if (dataStr) {
+        url = `${url}${url.indexOf('?') > -1 ? '&' : '?'}${dataStr}`;
+      }
     }
 
     if (newOpts.method.toUpperCase() === 'GET' && hash) {
@@ -103,12 +115,9 @@ const newFetch = (url, params = {}, opts = {}) => {
     return newOpts;
   };
 
-  const errorHandler = (errorRes) => {
+  const errorHandler = errorRes => {
     const returnObj = {};
-    const {
-      resultCode,
-      resultDesc,
-    } = resProps;
+    const { resultCode, resultDesc } = resProps;
     returnObj[resultCode] = '-1';
     returnObj[resultDesc] = `${errorRes.status} ${errorRes.statusText}`;
     return returnObj;
@@ -118,93 +127,120 @@ const newFetch = (url, params = {}, opts = {}) => {
 
   const createdOpts = createOpts(params);
 
-  return new Promise((resolve) => {
-    oldFetch(shouldBaseUrl ? (baseUrl + url) : url, createdOpts)
-      .then((res) => {
+  return new Promise(resolve => {
+    oldFetch(shouldBaseUrl ? baseUrl() + url : url, createdOpts)
+      .then(res => {
         if (res.status < 200 || res.status >= 300) {
           monitor.error(res);
           resolve(errorHandler(res));
         }
         monitor.end(res);
 
-        return (res.headers.get('content-type').indexOf('application/json') > -1 ? res.json() : res.text());
+        return res.headers.get('content-type').indexOf('application/json') > -1
+          ? res.json()
+          : res.blob();
       })
-      .then((json) => {
+      .then(json => {
         // token date out, request the refresh token
         if (typeof json === 'string') {
           json = JSON.parse(json);
         }
-        if (judgeTokenInvalid({
-          invalidCode: refreshToken.invalidCode,
-          responseCode: json[resProps.resultCode] || 0,
-        }) && refreshToken.getValue && !tokenInvalid) {
+        // log time end
+        if (json.code == 3090310006) {
+          localStorage.setItem('accessToken', '');
+          localStorage.removeItem('user');
+          window.location.href = '/SignIn';
+          return;
+        }
+        if (
+          judgeTokenInvalid({
+            invalidCode: refreshToken.invalidCode,
+            responseCode: json[resProps.resultCode] || 0,
+          }) &&
+          refreshToken.getValue &&
+          !tokenInvalid
+        ) {
           tokenInvalid = true;
           const tokenParam = {};
           tokenParam[refreshToken.key] = refreshToken.getValue();
           refreshToken.beforeRefresh();
           oldFetch(refreshToken.url, createOpts(tokenParam))
-            .then((refreshRes) => {
+            .then(refreshRes => {
               if (refreshRes.status < 200 || refreshRes.status >= 300) {
                 tokenInvalid = false;
                 monitor.error(refreshRes);
                 resolve(errorHandler(refreshRes));
               }
               return refreshRes.json();
-            }).then((tokenRes) => {
+            })
+            .then(tokenRes => {
               tokenInvalid = false;
               refreshToken.afterRefresh(tokenRes);
               // user center the result data is resultData
               const token = (tokenRes.resultData || {})[refreshToken.tokenName];
               if (token) {
-                oldFetch(shouldBaseUrl ? (baseUrl + url) : url, createOpts(params, token))
-                  .then((newRes) => {
-                    if (newRes.status < 200 || newRes.status >= 300) {
-                      monitor.error(newRes);
-                      resolve(errorHandler(newRes));
-                    }
-                    resolve(newRes.headers.get('content-type').indexOf('application/json') > -1
-                      ? newRes.json() : newRes.blob());
-                  });
+                oldFetch(
+                  shouldBaseUrl ? baseUrl() + url : url,
+                  createOpts(params, token)
+                ).then(newRes => {
+                  if (newRes.status < 200 || newRes.status >= 300) {
+                    monitor.error(newRes);
+                    resolve(errorHandler(newRes));
+                  }
+                  resolve(
+                    newRes.headers
+                      .get('content-type')
+                      .indexOf('application/json') > -1
+                      ? newRes.json()
+                      : newRes.blob()
+                  );
+                });
               } else {
                 const returnObj = {};
-                const {
-                  resultCode,
-                  resultDesc,
-                } = resProps;
+                const { resultCode, resultDesc } = resProps;
                 returnObj[resultCode] = '-1000';
                 returnObj[resultDesc] = '会话失效，请重新登录';
                 resolve(returnObj);
               }
             });
-        } else if (judgeTokenInvalid({
-          invalidCode: refreshToken.invalidCode,
-          responseCode: json[resProps.resultCode],
-        }) && refreshToken.getValue && tokenInvalid) {
+        } else if (
+          judgeTokenInvalid({
+            invalidCode: refreshToken.invalidCode,
+            responseCode: json[resProps.resultCode],
+          }) &&
+          refreshToken.getValue &&
+          tokenInvalid
+        ) {
           const timer = setInterval(() => {
             if (!tokenInvalid) {
               clearInterval(timer);
-              oldFetch(shouldBaseUrl ? (baseUrl + url) : url, createOpts(params))
-                .then((res) => {
-                  if (res.status < 200 || res.status >= 300) {
-                    monitor.error(res);
-                    resolve(errorHandler(res));
-                  }
-                  monitor.end(res);
+              oldFetch(
+                shouldBaseUrl ? baseUrl() + url : url,
+                createOpts(params)
+              ).then(res => {
+                if (res.status < 200 || res.status >= 300) {
+                  monitor.error(res);
+                  resolve(errorHandler(res));
+                }
+                monitor.end(res);
 
-                  resolve(res.headers.get('content-type').indexOf('application/json') > -1 ? res.json() : res.blob());
-                });
+                resolve(
+                  res.headers.get('content-type').indexOf('application/json') >
+                    -1
+                    ? res.json()
+                    : res.blob()
+                );
+              });
             }
           }, 500);
         } else {
           resolve(json);
         }
-      }).catch((e) => {
+      })
+      .catch(e => {
         monitor.error(e);
         const returnObj = {};
-        const {
-          resultCode,
-          resultDesc,
-        } = resProps;
+        const { resultCode, resultDesc } = resProps;
         returnObj[resultCode] = '-1';
         returnObj[resultDesc] = '网络异常，请重试';
         resolve(returnObj);
@@ -214,10 +250,10 @@ const newFetch = (url, params = {}, opts = {}) => {
 
 newFetch.init = (opts = {}) => {
   const keys = Object.keys(opts);
-  keys.forEach((key) => {
+  keys.forEach(key => {
     if (typeof opts[key] === 'object') {
       const subKeys = Object.keys(opts[key]);
-      subKeys.forEach((subKey) => {
+      subKeys.forEach(subKey => {
         if (!config[key]) {
           config[key] = {};
         }
@@ -231,9 +267,9 @@ newFetch.init = (opts = {}) => {
 
 newFetch.init({
   headers: {},
-  baseUrl: '',
+  baseUrl: () => '',
   addAuth: undefined,
-  authName: 'Authorization',
+  authName: 'token',
   monitor: {
     start: () => {},
     end: () => {},
@@ -241,10 +277,10 @@ newFetch.init({
   },
   hash: '',
   resProps: {
-    resultCode: 'errorCode',
-    resultDesc: 'msg',
-    resultData: 'payload',
-    success: 'success',
+    resultCode: 'code',
+    resultDesc: 'message',
+    resultData: 'data',
+    success: 'status',
   },
   refreshToken: {
     invalidCode: '',

@@ -4,20 +4,21 @@
 // call selectors as regular functions inside mapStateToProps
 import { createSelector } from 'reselect';
 
-const getMenus = (state) => state.common.menus;
+const getMenus = state => state.common.menus;
 
-const getLocation = (state, props) => (props ? props.history.location.pathname : window.location.pathname);
+const getLocation = (state, props) =>
+  props ? props.history.location.pathname : window.location.pathname;
 
 export const getSideMenus = createSelector(
   [getMenus],
-  (menus) => menus || []
+  menus => menus || []
 );
 
 export const getMenuRouter = createSelector(
   [getMenus, getLocation],
   (allMenus, location) => {
     const menuRouter = [];
-    const findMenu = (menus) => {
+    const findMenu = menus => {
       let res = false;
       for (let i = 0; i < menus.length; i += 1) {
         const menu = menus[i];

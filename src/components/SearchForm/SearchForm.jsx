@@ -1,11 +1,6 @@
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
-import {
-  Form,
-  Row,
-  Col,
-  Button,
-} from 'antd';
+import { Form, Row, Col, Button, Icon } from 'antd';
 import PropTypes from 'prop-types';
 import createFormItem from '../createFormItem';
 import mapPropsToFields from '../mapPropsToFields';
@@ -30,6 +25,7 @@ class AdvancedSearchForm extends Component {
     hideReset: PropTypes.bool,
     buttonSpan: PropTypes.number,
     searchText: PropTypes.string,
+    extraParams: PropTypes.object,
   };
 
   static defaultProps = {
@@ -39,14 +35,22 @@ class AdvancedSearchForm extends Component {
     hideReset: false,
     buttonSpan: 6,
     searchText: '搜索',
+    extraParams: {},
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: true,
+    };
+  }
 
   componentDidMount() {
     this.props.validateDisabled && this.props.form.validateFieldsAndScroll();
   }
 
   getValues(callback) {
-    this.props.form.validateFieldsAndScroll((err) => {
+    this.props.form.validateFieldsAndScroll({ force: true }, err => {
       if (!err) {
         callback();
       }
@@ -54,25 +58,53 @@ class AdvancedSearchForm extends Component {
   }
 
   setDisabled(fieldsError) {
-    return this.props.validateDisabled && Object.keys(fieldsError).some((field) => fieldsError[field]);
+    return (
+      this.props.validateDisabled &&
+      Object.keys(fieldsError).some(field => fieldsError[field])
+    );
   }
 
   handleSearch = () => {
     this.getValues(() => {
-      const limit = (this.props.page && this.props.page.limit) || 20;
+      const pageSize = (this.props.page && this.props.page.pageSize) || 10;
       const searchParams = this.props.values;
-      this.props.search({
+      const promise = this.props.search({
         ...searchParams,
-        offset: 0,
-        limit,
+        ...this.props.extraParams,
+        pageNo: 1,
+        pageSize,
         columnKey: this.props.sorter.columnKey,
         order: this.props.sorter.order,
       });
+      promise &&
+        promise.then &&
+        promise.then(res => {
+          if (res.success) {
+            this.props.searchSuccess && this.props.searchSuccess();
+          }
+        });
     });
   };
 
   handleReset = () => {
-    (this.props.reset && this.props.reset()) || this.props.changeRecord({});
+    if (this.props.reset) {
+      this.props.reset();
+    } else {
+      const resetValues = {};
+      this.props.fields.forEach(f => {
+        resetValues[f.name] = {
+          ...f,
+          value: f.value,
+        };
+      });
+      this.props.changeRecord(resetValues);
+    }
+  };
+
+  toggle = () => {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    });
   };
 
   render() {
@@ -88,6 +120,8 @@ class AdvancedSearchForm extends Component {
       hideReset,
       buttonSpan,
       searchText,
+      max = 100,
+      cuzSearch,
     } = this.props;
 
     const { getFieldsError } = form;
@@ -98,17 +132,27 @@ class AdvancedSearchForm extends Component {
     const labelCol = expand ? 6 : 4;
     const wrapperCol = expand ? 18 : 20;
     for (let i = 0; i < len; i += 1) {
-      formItems.push(createFormItem({
-        field: fields[i],
-        form,
-        validateDisabled,
-        formItemLayout: {
-          labelCol: { span: fields[i].large ? 2 : fields[i].labelCol || labelCol },
-          wrapperCol: { span: fields[i].large ? 22 : fields[i].wrapperCol || wrapperCol },
-        },
-        colSpan: !expand || fields[i].large ? 24 : (fields[i].col || 8),
-        values,
-      }));
+      formItems.push(
+        createFormItem({
+          field: {
+            ...fields[i],
+            hidden: this.state.collapsed && i >= max,
+            search: false,
+          },
+          form,
+          validateDisabled,
+          formItemLayout: {
+            labelCol: {
+              span: fields[i].large ? 2 : fields[i].labelCol || labelCol,
+            },
+            wrapperCol: {
+              span: fields[i].large ? 22 : fields[i].wrapperCol || wrapperCol,
+            },
+          },
+          colSpan: !expand || fields[i].large ? 24 : fields[i].col || 8,
+          values,
+        })
+      );
     }
 
     return (
@@ -119,69 +163,83 @@ class AdvancedSearchForm extends Component {
       >
         <Row gutter={20}>
           {formItems}
-          {
-            expand && (
-              <Col
-                span={buttonSpan} 
-                className="search-button-col" 
-                style={{ ...buttonStyle, textAlign: 'left', whiteSpace: 'nowrap' }}
+          {expand && (
+            <Col
+              span={buttonSpan}
+              className="search-button-col"
+              style={{
+                ...buttonStyle,
+                textAlign: 'left',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <FormItem
+                className="btn-container"
+                wrapperCol={{
+                  span: 24,
+                  offset: buttonStyle.clear === 'both' ? 8 : 0,
+                }}
               >
-                <FormItem
-                  className="btn-container"
-                  wrapperCol={{ span: 24, offset: buttonStyle.clear === 'both' ? 8 : 0 }}
+                <Button
+                  type="primary"
+                  onClick={cuzSearch || this.handleSearch}
+                  className="search-button"
+                  disabled={this.setDisabled(getFieldsError())}
+                  htmlType="submit"
                 >
+                  {searchText}
+                </Button>
+                {!hideReset && (
+                  <Button
+                    style={{ marginLeft: 8 }}
+                    onClick={this.handleReset.bind(this)}
+                  >
+                    重置
+                  </Button>
+                )}
+                {fields.length > max && (
+                  <Button type="link" onClick={this.toggle}>
+                    {this.state.collapsed ? '展开' : '收起'}
+                    <Icon
+                      type="down"
+                      className={`searchform-arrow ${!this.state.collapsed &&
+                        'searchform-arrow-down'}`}
+                    />
+                  </Button>
+                )}
+              </FormItem>
+            </Col>
+          )}
+          {!expand && (
+            <div>
+              <Col span={24}>
+                <FormItem className="btn-container">
                   <Button
                     type="primary"
-                    onClick={this.handleSearch}
-                    className="search-button"
+                    onClick={cuzSearch || this.handleSearch}
+                    style={{ width: '100%' }}
                     disabled={this.setDisabled(getFieldsError())}
                   >
-                    { searchText }
+                    {searchText}
                   </Button>
-                  {
-                    !hideReset &&
+                </FormItem>
+              </Col>
+              {!hideReset && (
+                <Col span={24}>
+                  <FormItem>
                     <Button
-                      style={{ marginLeft: 8 }}
-                      onClick={this.handleReset}
+                      style={{ width: '100%' }}
+                      onClick={this.handleReset.bind(this)}
                     >
                       重置
                     </Button>
-                  }
-                </FormItem>
-              </Col>
-            )
-          }
-          {
-            !expand && (
-              <div>
-                <Col span={24}>
-                  <FormItem className="btn-container">
-                    <Button
-                      type="primary"
-                      onClick={this.handleSearch}
-                      style={{ width: '100%' }}
-                      disabled={this.setDisabled(getFieldsError())}
-                    >
-                      搜索
-                    </Button>
                   </FormItem>
                 </Col>
-                {
-                  !hideReset && (
-                    <Col span={24}>
-                      <FormItem>
-                        <Button style={{ width: '100%' }} onClick={this.handleReset}>
-                          重置
-                        </Button>
-                      </FormItem>
-                    </Col>
-                  )
-                }
-              </div>
-            )
-          }
+              )}
+            </div>
+          )}
         </Row>
-        { children }
+        {children}
       </Form>
     );
   }

@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
@@ -8,6 +9,10 @@ import respond from '../../decorators/Responsive';
 const { Header } = Layout;
 
 class TopMenu extends Component {
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
   onClick({ key }) {
     this.props.clickTopMenu(key);
   }
@@ -22,12 +27,20 @@ class TopMenu extends Component {
   }
 }
 
-const TopMenuWrapper = connect((state) => ({
-  selectedKeys: state.common.selectedTopKeys,
-  firstLeaf: state.common.firstLeaf,
-}), {
-  clickTopMenu: common.clickTopMenu,
-  initMenu: common.initMenu,
-})(TopMenu);
+const TopMenuWrapper = connect(
+  state => ({
+    selectedKeys: state.common.selectedTopKeys,
+    firstLeaf: state.common.firstLeaf,
+    cityData: state.common.cityData,
+    cityLoading: state.common.cityLoading,
+    cityId: state.common.cityId,
+  }),
+  {
+    clickTopMenu: common.clickTopMenu,
+    initMenu: common.initMenu,
+    changeCity: common.changeCity,
+    changeCityClient: common.changeCityClient,
+  }
+)(TopMenu);
 
 export default respond(TopMenuWrapper);

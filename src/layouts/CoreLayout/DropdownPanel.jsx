@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Menu, Icon, Dropdown, Modal } from 'antd';
 import { connect } from 'react-redux';
-import { history } from '../../store/location';
 import { common } from '../../store/common';
 
 class DropdownPanel extends Component {
@@ -14,12 +13,14 @@ class DropdownPanel extends Component {
   render() {
     const logout = () => {
       localStorage.setItem('accessToken', '');
-      history.push({ pathname: '/SignIn' });
-      window.storeManager.clear(); // clear the redux state, because the data is related the different roles
+      window.location.href = '/SignIn';
     };
     /* eslint-disable */
     const menu = (
       <Menu onClick={this.onMenuClick.bind(this)}>
+        <Menu.Item key="2">
+          修改密码
+        </Menu.Item>
         <Menu.Item key="3">
           <a
             tabIndex={0}
@@ -44,10 +45,9 @@ class DropdownPanel extends Component {
     return (
       <Dropdown overlay={menu} trigger={['click']}>
         <a className="flex flex-c">
-          <img className="login-avatar" alt="" src="/avatar.jpg" />
+          <img className="login-avatar" alt="" src="/avatar.png" />
           <span className="login-name">
-            {localStorage.getItem('user') &&
-            (JSON.parse(localStorage.getItem('user')) || {}).username}，你好！<Icon type="down" />
+            {localStorage.getItem('username')}，你好！<Icon type="down" />
           </span>
 
         </a>
@@ -66,6 +66,7 @@ const mapDispatchToProps = {
   hideEditPwd: common.hideEditPwd,
   savePwd: common.savePwd,
   initCommon: common.initCommon,
+  logout: common.logout,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DropdownPanel);

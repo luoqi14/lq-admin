@@ -85,8 +85,14 @@ if (project.env === 'local') {
   });
 
   const users = require('./mock/users');
+  const coupons = require('./mock/coupons');
+  const classify = require('./mock/classify');
+  const product = require('./mock/product');
 
   app.use('/users', users);
+  app.use('/coupons', coupons);
+  app.use('/classify', classify);
+  app.use('/product', product);
 
   debug('Enabling webpack dev and HMR middleware');
   app.use(require('webpack-dev-middleware')(compiler, {

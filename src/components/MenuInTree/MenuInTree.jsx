@@ -47,8 +47,8 @@ class MenuInTree extends Component {
     autoExpandParent: true,
   };
 
-  renderTreeNodes = (data) => (
-    data.map((item) => {
+  renderTreeNodes = data =>
+    data.map(item => {
       const { treeTitle, treeKey, treeChildren } = item;
       if (treeChildren) {
         return (
@@ -57,9 +57,10 @@ class MenuInTree extends Component {
           </TreeNode>
         );
       }
-      return <TreeNode {...item} title={treeTitle} key={treeKey} dataRef={item} />;
-    })
-  )
+      return (
+        <TreeNode {...item} title={treeTitle} key={treeKey} dataRef={item} />
+      );
+    });
 
   render() {
     const {
@@ -79,7 +80,7 @@ class MenuInTree extends Component {
       isTreeInModal,
       disabled,
     } = this.props;
-   
+
     const treeCont = (
       <Tree
         checkable
@@ -93,24 +94,24 @@ class MenuInTree extends Component {
         disabled={disabled}
       >
         {this.renderTreeNodes(treeData)}
-      </Tree>);
+      </Tree>
+    );
 
     return (
       <div>
-        {
-          isTreeInModal ? 
-            <Modal
-              title={modalTitle}
-              okText={okText}
-              visible={modalShow}
-              onOk={handleOk}
-              onCancel={handleCancel}
-            >
-              { treeCont }
-            </Modal>
-            :
-            <div> { treeCont } </div>
-        }
+        {isTreeInModal ? (
+          <Modal
+            title={modalTitle}
+            okText={okText}
+            visible={modalShow}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            {treeCont}
+          </Modal>
+        ) : (
+          <div> {treeCont} </div>
+        )}
       </div>
     );
   }

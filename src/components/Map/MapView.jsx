@@ -18,13 +18,15 @@ export default class MapView extends Component {
   };
   constructor(props) {
     super(props);
+    this.first = true;
     this.state = {
       loaded: false,
     };
     let script = document.getElementById('mapScript');
     if (!script) {
       script = document.createElement('script');
-      script.src = 'https://webapi.amap.com/maps?' +
+      script.src =
+        'https://webapi.amap.com/maps?' +
         'v=1.4.7&key=38dbfac589d262c87bd3aaba70038538&plugin=AMap.Geocoder&callback=initMap';
       script.id = 'mapScript';
       document.head.appendChild(script);
@@ -45,9 +47,7 @@ export default class MapView extends Component {
   }
 
   componentDidMount() {
-    const {
-      loaded,
-    } = this.state;
+    const { loaded } = this.state;
     if (loaded) {
       this.initMap();
     }
@@ -55,49 +55,53 @@ export default class MapView extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.disabled !== nextProps.disabled) {
-      nextProps.disabled ? this.positionPicker && this.positionPicker.stop() :
-        this.positionPicker && this.positionPicker.start();
+      nextProps.disabled
+        ? this.positionPicker && this.positionPicker.stop()
+        : this.positionPicker && this.positionPicker.start();
     }
-    if (Object.prototype.toString.call(nextProps.value) === '[object Array]' || typeof nextProps.value === 'string') {
+    if (
+      Object.prototype.toString.call(nextProps.value) === '[object Array]' ||
+      typeof nextProps.value === 'string'
+    ) {
       this.update(nextProps.value); // dead loop
     }
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const {
-      loaded,
-    } = this.state;
+    const { loaded } = this.state;
     if (!loaded && nextState.loaded) {
       this.initMap();
     }
   }
 
   initMap() {
-    const {
-      id,
-      value,
-      zoom,
-      disabled,
-    } = this.props;
+    const { id, value, zoom, disabled, onDrag } = this.props;
     this.reloadUITimer = setInterval(() => {
       if (window.initAMapUI) {
         clearInterval(this.reloadUITimer);
         window.initAMapUI && window.initAMapUI();
-        window.AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) => {
+        window.AMapUI.loadUI(['misc/PositionPicker'], PositionPicker => {
           this.positionPicker = new PositionPicker({
-            mode:'dragMap',
+            mode: 'dragMap',
             map: this.map,
             iconStyle: {
               url: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
-              size:[15, 25],
-              ancher:[7, 29],
+              size: [15, 25],
+              ancher: [7, 29],
             },
           });
-          this.positionPicker.on('success', (positionResult) => {
-            this.update({ ...positionResult.regeocode, location: positionResult.position });
+          this.positionPicker.on('success', positionResult => {
+            if (!this.first) {
+              const v = {
+                ...positionResult.regeocode,
+                location: positionResult.position,
+              };
+              this.update(v);
+              onDrag && onDrag(v);
+            }
+            this.first = false;
           });
-          this.positionPicker.on('fail', () => {
-          });
+          this.positionPicker.on('fail', () => {});
           !disabled && this.positionPicker.start();
         });
       }
@@ -109,7 +113,7 @@ export default class MapView extends Component {
         viewMode: '3D',
         expandZoomRange: true,
         pitch: 0,
-        scrollWheel:false,
+        scrollWheel: false,
       });
       this.map.on('movestart', () => {
         if (!this.props.disabled) {
@@ -121,20 +125,23 @@ export default class MapView extends Component {
       this.geocoder = new window.AMap.Geocoder({
         radius: 500,
       });
-      window.AMap.plugin(['AMap.Scale', 'AMap.ControlBar', 'AMap.Autocomplete'], () => {
-        const toolBar = new window.AMap.Scale();
-        this.map.addControl(toolBar);
-        const controlBar = new window.AMap.ControlBar();
-        this.map.addControl(controlBar);
-        const autoOptions = {
-          city: '全国',
-          input: 'tipinput',
-        };
-        this.autoComplete = new window.AMap.Autocomplete(autoOptions);
-        window.AMap.event.addListener(this.autoComplete, 'select', (data) => {
-          this.poi = data.poi;
-        });
-      });
+      window.AMap.plugin(
+        ['AMap.Scale', 'AMap.ControlBar', 'AMap.Autocomplete'],
+        () => {
+          const toolBar = new window.AMap.Scale();
+          this.map.addControl(toolBar);
+          const controlBar = new window.AMap.ControlBar();
+          this.map.addControl(controlBar);
+          const autoOptions = {
+            city: '全国',
+            input: 'tipinput',
+          };
+          this.autoComplete = new window.AMap.Autocomplete(autoOptions);
+          window.AMap.event.addListener(this.autoComplete, 'select', data => {
+            this.poi = data.poi;
+          });
+        }
+      );
       this.update(value);
     }
   }
@@ -148,12 +155,18 @@ export default class MapView extends Component {
           if (status === 'complete' && result.info === 'OK') {
             this.map.setCenter(value);
             this.addMarker(value, result.regeocode.formattedAddress);
-            this.props.onChange({ ...result.regeocode, location: { lng: value[0], lat: value[1] } });
+            this.props.onChange({
+              ...result.regeocode,
+              location: { lng: value[0], lat: value[1] },
+            });
           }
         });
       } else if (Object.prototype.toString.call(value) === '[object Object]') {
         // this.map.setCenter([value.location.lat, value.location.lng]);
-        this.addMarker([value.location.lng, value.location.lat], value.formattedAddress);
+        this.addMarker(
+          [value.location.lng, value.location.lat],
+          value.formattedAddress
+        );
         this.props.onChange(value);
       } else {
         this.geocoder.getLocation(value, (status, result) => {
@@ -185,25 +198,29 @@ export default class MapView extends Component {
   geocoderCallBack(data) {
     const geocode = data.geocodes;
     for (let i = 0; i < geocode.length; i += 1) {
-      this.addMarker([geocode[i].location.getLng(), geocode[i].location.getLat()], geocode[i].formattedAddress);
+      this.addMarker(
+        [geocode[i].location.getLng(), geocode[i].location.getLat()],
+        geocode[i].formattedAddress
+      );
     }
-    this.map.setFitView();
+    // this.map.setFitView();
     this.map.setZoom(this.props.zoom);
     if (geocode.length === 1) {
-      const latlng = [geocode[0].location.getLng(), geocode[0].location.getLat()];
+      const latlng = [
+        geocode[0].location.getLng(),
+        geocode[0].location.getLat(),
+      ];
       this.map.setCenter(latlng);
       this.startValue = latlng;
-      this.props.onChange({ coordinate: latlng, address: geocode[0].formattedAddress });
+      this.props.onChange(geocode[0]);
+      this.update(geocode[0]);
     } else {
       this.props.onChange(undefined);
     }
   }
 
   render() {
-    const {
-      id,
-      height,
-    } = this.props;
+    const { id, height } = this.props;
 
     return (
       <div
@@ -213,10 +230,7 @@ export default class MapView extends Component {
         }}
       >
         <div id="myPageTop">
-          <input
-            id="tipinput"
-            placeholder="输入详细地址，越详细定位越精准"
-          />
+          <input id="tipinput" placeholder="输入详细地址，越详细定位越精准" />
           <Button
             type="primary"
             onClick={() => {

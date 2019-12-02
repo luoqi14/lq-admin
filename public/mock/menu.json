@@ -1,6 +1,5 @@
 {
-  "success": true,
-  "payload": [
+  "data": [
     {
       "id": "1",
       "name": "Dashboard",
@@ -43,17 +42,6 @@
         }
       ]
     }, {
-      "id": "5",
-      "name": "用户",
-      "icon": "user",
-      "children": [
-        {
-          "id": "51",
-          "name": "登录",
-          "href": "/SignIn"
-        }
-      ]
-    }, {
       "id": "6",
       "name": "使用文档",
       "icon": "book",
@@ -75,5 +63,6 @@
         }
       ]
     }
-  ]
+  ],
+  "status": 1
 }

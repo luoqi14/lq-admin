@@ -1,0 +1,32 @@
+@import '../colors';
+.indicator-maximize {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+}
+
+a.indicator-maximize-container {
+  color: rgba(0,0,0,.45);
+  transition: color .3s;
+}
+
+a.indicator-maximize-container:hover {
+  color: $primary-color;
+}
+
+.maximize-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1001;
+  background: #fff;
+  padding: 8px;
+
+  .ant-table-thead>tr>th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 1px 0 0 #e8e8e8;
+  }
+}

@@ -9,7 +9,7 @@ const mapDispatchToProps = {
   ...actions,
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const localState = state[moduleName];
   return {
     ...localState,
@@ -18,4 +18,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(View);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(View);

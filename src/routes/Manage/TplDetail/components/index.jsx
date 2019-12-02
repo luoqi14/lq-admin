@@ -5,9 +5,7 @@ import { parseFields } from '../../../../util';
 class View extends Component {
   constructor(props) {
     super(props);
-    const {
-      id,
-    } = this.props.match.params;
+    const { id } = this.props.match.params;
     if (id === '0') {
       this.type = '1';
     } else {
@@ -16,22 +14,27 @@ class View extends Component {
   }
 
   componentDidMount() {
-    const {
-      match,
-      load,
-    } = this.props;
-    const {
-      id,
-    } = match.params;
-    load({
-      id,
-    });
+    const { match, load } = this.props;
+    const { id } = match.params;
+    if (this.type !== '1') {
+      load({
+        id,
+      });
+    }
   }
 
-  submit = (form) => {
-    form.validateFieldsAndScroll({ force: true }, (err) => {
+  componentWillUnmount() {
+    this.props.reset();
+  }
+
+  submit = form => {
+    form.validateFieldsAndScroll({ force: true }, (err, values) => {
       if (!err) {
-        //
+        this.props.save(values).then(res => {
+          if (res.success) {
+            this.props.history.goBack();
+          }
+        });
       }
     });
   };
@@ -47,6 +50,7 @@ class View extends Component {
       fields,
       buttons,
       loading,
+      typeMap,
     } = this.props;
 
     const breadcrumb = [
@@ -59,6 +63,10 @@ class View extends Component {
         id: 2,
         name: '2',
       },
+      {
+        id: 3,
+        name: typeMap[this.type],
+      },
     ];
 
     return (
@@ -68,10 +76,13 @@ class View extends Component {
           values={record}
           changeRecord={changeRecord}
           breadcrumb={breadcrumb}
-          fields={parseFields.call(this, fields.map((field) => ({
-            ...field,
-            required: true,
-          })))}
+          fields={parseFields.call(
+            this,
+            fields.map(field => ({
+              required: true,
+              ...field,
+            }))
+          )}
           buttons={parseFields.call(this, buttons)}
         />
       </div>

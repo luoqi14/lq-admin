@@ -1,0 +1,25 @@
+.ant-table-body {
+  tr.drop-over-downward td {
+    border-bottom: 2px dashed $primary-color!important;
+  }
+
+  tr.drop-over-upward td {
+    border-top: 2px dashed $primary-color!important;
+  }
+}
+
+.drag-sorting-table {
+  .ant-table-tbody>tr>td:first-child {
+    padding: 0!important;
+    .anticon {
+      margin: 0;
+    }
+  }
+  .ant-table-thead>tr>th:first-child {
+    padding: 0!important;
+  }
+}
+
+.fe-table .ant-table-tbody .anticon .anticon {
+  margin: 0;
+}

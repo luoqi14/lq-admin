@@ -58,7 +58,7 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.0.0",
     "reselect": "^3.0.1",
-    "xlsx": "^0.14.1"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",

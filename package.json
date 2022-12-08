@@ -93,7 +93,7 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.4.0",
     "eventsource-polyfill": "^0.9.6",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",
     "fs-extra": "^1.0.0",
